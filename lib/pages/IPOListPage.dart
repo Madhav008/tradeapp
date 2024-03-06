@@ -119,10 +119,10 @@ class IPOListPage extends StatelessWidget {
               TextSpan(
                 children: [
                   TextSpan(
-                    text: 'IPO ',
+                    text: 'Fan',
                   ),
                   TextSpan(
-                    text: 'Premium ',
+                    text: 'Xange ',
                     style: TextStyle(
                       color: Color(0xFFFE9879),
                       fontWeight: FontWeight.w800,
@@ -142,8 +142,8 @@ class IPOListPage extends StatelessWidget {
       bottom: TabBar(
         tabs: [
           Tab(text: 'Upcoming'),
-          Tab(text: 'Open'),
-          Tab(text: 'Closed'),
+          Tab(text: 'Live'),
+          Tab(text: 'Results'),
         ],
       ),
     );

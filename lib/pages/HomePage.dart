@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fanxange/pages/Dashboard.dart';
 import 'package:fanxange/pages/IPOListPage.dart';
-import 'package:fanxange/pages/Orders.dart'; // Import the correct Dashboard page
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -14,10 +13,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
-    Dashboard(),
     IPOListPage(),
-    OrdersPage(),
-    Dashboard(),
+    IPOListPage(),
     Dashboard(),
   ];
 
@@ -41,20 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.arrowTrendUp),
-            label: 'IPO',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.book),
-            label: 'Orders',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.suitcase),
             label: 'Portfolio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.person),
-            label: 'Profile',
+            icon: Icon(FontAwesomeIcons.wallet),
+            label: 'Wallet',
           ),
         ],
         currentIndex: _selectedIndex,

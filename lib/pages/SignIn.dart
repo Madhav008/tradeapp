@@ -161,13 +161,13 @@ class _SignInState extends State<SignIn> {
         ),
         children: const [
           TextSpan(
-            text: 'IPO ',
+            text: 'Fan',
             style: TextStyle(
               fontWeight: FontWeight.w800,
             ),
           ),
           TextSpan(
-            text: 'PREMIUM ',
+            text: 'Xange ',
             style: TextStyle(
               color: Color(0xFFFE9879),
               fontWeight: FontWeight.w800,
