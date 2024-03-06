@@ -11,8 +11,9 @@ class DatabaseAPI with ChangeNotifier {
   final AuthAPI auth = AuthAPI();
 
   // Getter
-  DocumentList? _ipolist;
-  DocumentList? get ipolist => _ipolist;
+  DocumentList? _matchlist;
+  DocumentList? get matchlist => _matchlist;
+
 
   var _searchipolist;
   DocumentList? get searchipolist => _searchipolist;
@@ -39,7 +40,7 @@ class DatabaseAPI with ChangeNotifier {
   // Constructor
   DatabaseAPI() {
     init();
-    getIPOList();
+    getMatchesList();
   }
 
   init() {
@@ -51,17 +52,15 @@ class DatabaseAPI with ChangeNotifier {
     databases = Databases(client);
   }
 
-  getIPOList() async {
+  getMatchesList() async {
     try {
-      _isLoading = true; // Set loading state to true
+      _isLoading = true;
       notifyListeners();
 
-      _ipolist = await databases.listDocuments(
+      _matchlist = await databases.listDocuments(
         databaseId: APPWRITE_DATABASE_ID,
-        collectionId: COLLECTION_IPO,
+        collectionId: COLLECTION_Maches,
       );
-
-      // Do whatever you need with the filtered lists...
     } catch (e) {
       print(e);
     } finally {
@@ -111,26 +110,7 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
-  void setFilter(bool isSME) async {
-    if (isSME) {
-      _ipolist = await databases.listDocuments(
-          databaseId: APPWRITE_DATABASE_ID,
-          collectionId: COLLECTION_IPO,
-          queries: [
-            Query.equal('type', ['SME']),
-            // Query.greaterThan('year', 1999)
-          ]);
-    } else {
-      _ipolist = await databases.listDocuments(
-          databaseId: APPWRITE_DATABASE_ID,
-          collectionId: COLLECTION_IPO,
-          queries: [
-            Query.equal('type', ['EQ']),
-            // Query.greaterThan('year', 1999)
-          ]);
-    }
-    notifyListeners();
-  }
+
 
   void searchIPO(String query) async {
     try {

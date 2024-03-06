@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/components/Drawer.dart';
-import 'package:fanxange/components/IpoListWidget.dart';
+import 'package:fanxange/components/MatchListWidget.dart';
 import 'package:fanxange/components/MyAppBar.dart';
 import 'package:fanxange/pages/redundant/IpoDetail.dart';
 import 'package:provider/provider.dart';
@@ -85,48 +85,38 @@ class Dashboard extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      databaseAPI.setFilter(true);
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                          child: Text(
-                        "SME",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      )),
-                    ),
+                  child: Container(
+                    height: 40,
+                    width: 100,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                        child: Text(
+                      "SME",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    )),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      databaseAPI.setFilter(false);
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                          child: Text(
-                        "Mainboard",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      )),
-                    ),
+                  child: Container(
+                    height: 40,
+                    width: 100,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                        child: Text(
+                      "Mainboard",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    )),
                   ),
                 ),
               ],
@@ -138,7 +128,7 @@ class Dashboard extends StatelessWidget {
                   fontSize: 20.0,
                   fontWeight: FontWeight.w500),
             ),
-            IPOListWidget()
+            MatchListWidget()
           ],
         ),
       ),

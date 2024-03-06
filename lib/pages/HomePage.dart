@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fanxange/pages/Dashboard.dart';
+import 'package:fanxange/pages/redundant/Dashboard.dart';
 import 'package:fanxange/pages/IPOListPage.dart';
 
 class MyHomePage extends StatefulWidget {

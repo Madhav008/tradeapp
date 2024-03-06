@@ -16,6 +16,8 @@ const String COLLECTION_orders = "orders";
 const String COLLECTION_wallet = "wallet";
 const String COLLECTION_IPO = "IPOCollection";
 const String COLLECTION_IPOGRAPH = "IpoGraph";
+const String COLLECTION_Maches = "matches";
+
 // const int primaryColor = "0xFFE5F64A";
 // const int secondryColor = "0xFFF76961";
 // const int succesColor ="0xFF50CD89";

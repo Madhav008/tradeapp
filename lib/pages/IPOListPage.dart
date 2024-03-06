@@ -42,7 +42,7 @@ class IPOListPage extends StatelessWidget {
             );
           } else {
             var ipodata = databaseAPI.upcomingIpoList?.documents[index].data;
-            return IPOListTile(ipodata: ipodata);
+            return MatchListTile(ipodata: ipodata);
           }
         });
   }
@@ -60,7 +60,7 @@ class IPOListPage extends StatelessWidget {
             );
           } else {
             var ipodata = databaseAPI.openIpoList?.documents[index].data;
-            return IPOListTile(ipodata: ipodata);
+            return MatchListTile(ipodata: ipodata);
           }
         });
   }
@@ -78,7 +78,7 @@ class IPOListPage extends StatelessWidget {
             );
           } else {
             var ipodata = databaseAPI.closeIpoList?.documents[index].data;
-            return IPOListTile(ipodata: ipodata);
+            return MatchListTile(ipodata: ipodata);
           }
         });
   }

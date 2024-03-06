@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/pages/Dashboard.dart';
+import 'package:fanxange/pages/redundant/Dashboard.dart';
 import 'package:fanxange/pages/ExcutionPage.dart';
 import 'package:fanxange/pages/HomePage.dart';
 import 'package:fanxange/pages/redundant/IpoDetail.dart';

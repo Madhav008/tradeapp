@@ -3,8 +3,8 @@ import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/Search.dart';
 import 'package:provider/provider.dart';
 
-class IPOListWidget extends StatelessWidget {
-  IPOListWidget({
+class MatchListWidget extends StatelessWidget {
+  MatchListWidget({
     super.key,
   });
 
@@ -14,7 +14,7 @@ class IPOListWidget extends StatelessWidget {
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: databaseAPI.ipolist?.documents.length ?? 0,
+        itemCount: databaseAPI.matchlist?.documents.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
@@ -22,8 +22,8 @@ class IPOListWidget extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            var ipodata = databaseAPI.ipolist?.documents[index].data;
-            return IPOListTile(ipodata: ipodata);
+            var ipodata = databaseAPI.matchlist?.documents[index].data;
+            return MatchListTile(ipodata: ipodata);
           }
         });
   }

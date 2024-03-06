@@ -46,7 +46,7 @@ class SearchPage extends StatelessWidget {
                 );
               } else {
                 var ipodata = databaseApi.searchipolist?.documents[index].data;
-                return IPOListTile(ipodata: ipodata);
+                return MatchListTile(ipodata: ipodata);
               }
             },
           )
@@ -56,8 +56,8 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-class IPOListTile extends StatelessWidget {
-  const IPOListTile({
+class MatchListTile extends StatelessWidget {
+  const MatchListTile({
     super.key,
     required this.ipodata,
   });

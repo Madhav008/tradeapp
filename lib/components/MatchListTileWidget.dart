@@ -4,8 +4,8 @@ import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/redundant/IpoDetail.dart';
 import 'package:provider/provider.dart';
 
-class IPOListTile extends StatelessWidget {
-  const IPOListTile({
+class MatchListTile extends StatelessWidget {
+  const MatchListTile({
     super.key,
     required this.ipodata,
   });
