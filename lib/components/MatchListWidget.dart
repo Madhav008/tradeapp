@@ -22,7 +22,7 @@ class MatchListWidget extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            var ipodata = databaseAPI.matchlist?.documents[index].data;
+            var ipodata = databaseAPI.matchlist?.documents[index];
             return MatchListTile(ipodata: ipodata);
           }
         });

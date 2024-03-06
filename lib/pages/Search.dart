@@ -1,4 +1,6 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/redundant/IpoDetail.dart';
@@ -45,7 +47,7 @@ class SearchPage extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               } else {
-                var ipodata = databaseApi.searchipolist?.documents[index].data;
+                var ipodata = databaseApi.searchipolist?.documents[index];
                 return MatchListTile(ipodata: ipodata);
               }
             },
@@ -62,88 +64,102 @@ class MatchListTile extends StatelessWidget {
     required this.ipodata,
   });
 
-  final Map<String, dynamic>? ipodata;
+  final Document? ipodata;
 
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
 
-    String shortName = truncateName(
-        ipodata?['name'] ?? '', 15); // Adjust the maxLength as needed
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          databaseAPI.setIpoData(ipodata);
+          // databaseAPI.setIpoData(ipodata);
           Navigator.pushNamed(context, IPODetailPage.routeName);
         },
         child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Image.network(
-                  ipodata?['icon_url'] ?? '',
+                  ipodata?.data['team1logo'] ?? '',
                   height: 40,
                   width: 40,
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      shortName, // Access the name property
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      (ipodata?['type'] == "EQ" ? "MAINBOARD" : "SME"),
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
                 Expanded(
-                  child: SizedBox(
-                    width: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        (ipodata?.data['seriesname']),
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            (ipodata?.data['team1display']),
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          Text(
+                            (" VS "),
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          Text(
+                            (ipodata?.data['team2display']),
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      //Design a container in which timer is going hh:mm:ss
+                      Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ipodata?.data?['status'] == "notstarted"
+                              ? CountdownTimer(
+                                  endTime: DateTime.parse(
+                                          ipodata?.data?['start_date'] ?? '')
+                                      .millisecondsSinceEpoch,
+                                  textStyle: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                )
+                              : Text("Pending")),
+                    ],
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "₹${ipodata?['premium']}", // Access the max_price property
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    // Text(
-                    //   "${ipodata?['premium_percentage'].toStringAsFixed(2)}%", // Access the premium_percentage property
-                    //   style: GoogleFonts.inter(
-                    //     fontSize: 15,
-                    //     color: Colors.red,
-                    //     fontWeight: FontWeight.w500,
-                    //   ),
-                    // ),
-                  ],
+                Image.network(
+                  ipodata?.data['team2logo'] ?? '',
+                  height: 40,
+                  width: 40,
                 ),
               ],
             ),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),

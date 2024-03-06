@@ -14,6 +14,15 @@ class DatabaseAPI with ChangeNotifier {
   DocumentList? _matchlist;
   DocumentList? get matchlist => _matchlist;
 
+  // Declare three lists globally
+  List<dynamic> _notStartedMatches = [];
+  List<dynamic> _startedMatches = [];
+  List<dynamic> _completedMatches = [];
+
+  // Getters for the three lists
+  List<dynamic> get notStartedMatches => _notStartedMatches;
+  List<dynamic> get startedMatches => _startedMatches;
+  List<dynamic> get completedMatches => _completedMatches;
 
   var _searchipolist;
   DocumentList? get searchipolist => _searchipolist;
@@ -23,9 +32,6 @@ class DatabaseAPI with ChangeNotifier {
 
   var _closeIpoList;
   DocumentList? get closeIpoList => _closeIpoList;
-
-  var _upcomingIpoList;
-  DocumentList? get upcomingIpoList => _upcomingIpoList;
 
   var _ipodata;
   Map<String, dynamic> get ipodata => _ipodata;
@@ -41,6 +47,7 @@ class DatabaseAPI with ChangeNotifier {
   DatabaseAPI() {
     init();
     getMatchesList();
+    seprateMatchList();
   }
 
   init() {
@@ -69,13 +76,33 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
-  void setUpcomingList() {
-    DateTime today = DateTime.now();
+  void seprateMatchList() {
+    if (_matchlist != null) {
+      // Convert DocumentList to List
+      List<Document>? matches = _matchlist?.documents;
 
-    _upcomingIpoList = _ipolist;
+      // Filter matches based on status
+      _notStartedMatches = matches
+              ?.where((match) => match.data['status'] == 'notstarted')
+              .toList() ??
+          <Document>[];
 
-    print(_upcomingIpoList);
-    notifyListeners();
+      _startedMatches = matches
+              ?.where((match) => match.data['status'] == 'started')
+              .toList() ??
+          <Document>[];
+
+      _completedMatches = matches
+              ?.where((match) => match.data['status'] == 'completed')
+              .toList() ??
+          <Document>[];
+
+      print('Not Started Matches: $_notStartedMatches');
+      print('Started Matches: $_startedMatches');
+      print('Completed Matches: $_completedMatches');
+
+      notifyListeners();
+    }
   }
 
   void setIpoData(Map<String, dynamic>? newData) {
@@ -109,8 +136,6 @@ class DatabaseAPI with ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 
   void searchIPO(String query) async {
     try {

@@ -29,11 +29,11 @@ class IPOListPage extends StatelessWidget {
   }
 
   ListView _upcomingIpoList(DatabaseAPI databaseAPI) {
-    databaseAPI.setUpcomingList();
+    databaseAPI.seprateMatchList();
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: databaseAPI.upcomingIpoList?.documents.length ?? 0,
+        itemCount: databaseAPI.notStartedMatches.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
@@ -41,7 +41,7 @@ class IPOListPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            var ipodata = databaseAPI.upcomingIpoList?.documents[index].data;
+            var ipodata = databaseAPI.notStartedMatches[index];
             return MatchListTile(ipodata: ipodata);
           }
         });
@@ -51,7 +51,7 @@ class IPOListPage extends StatelessWidget {
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: databaseAPI.openIpoList?.documents.length ?? 0,
+        itemCount: databaseAPI.startedMatches.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
@@ -59,7 +59,7 @@ class IPOListPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            var ipodata = databaseAPI.openIpoList?.documents[index].data;
+            var ipodata = databaseAPI.startedMatches[index];
             return MatchListTile(ipodata: ipodata);
           }
         });
@@ -69,7 +69,7 @@ class IPOListPage extends StatelessWidget {
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: databaseAPI.closeIpoList?.documents.length ?? 0,
+        itemCount: databaseAPI.completedMatches.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
@@ -77,7 +77,7 @@ class IPOListPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            var ipodata = databaseAPI.closeIpoList?.documents[index].data;
+            var ipodata = databaseAPI.completedMatches[index];
             return MatchListTile(ipodata: ipodata);
           }
         });

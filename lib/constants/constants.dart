@@ -8,7 +8,7 @@ const String APPWRITE_URL = "https://appwrite.fanxange.live/v1";
 // const String APPWRITE_URL = "http://192.168.1.123:4999/v1";
 
 // ignore: constant_identifier_names
-const String APPWRITE_DATABASE_ID = "fanxange";
+const String APPWRITE_DATABASE_ID = "ipopremium";
 const String COLLECTION_stocks = "stocks";
 const String COLLECTION_transactions = "transactions";
 const String COLLECTION_orderook = "orderook";
