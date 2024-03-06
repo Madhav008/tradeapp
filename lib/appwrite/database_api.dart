@@ -93,6 +93,8 @@ class DatabaseAPI with ChangeNotifier {
       _isLoading = false; // Set loading state to false
       notifyListeners();
     }
+
+    sepratePlayerList();
   }
 
   void sepratePlayerList() {
@@ -105,6 +107,7 @@ class DatabaseAPI with ChangeNotifier {
       List<Document>? players = _playersdata!.documents;
 
       // Separate players into Team A and Team B
+  
       _teamAPlayers =
           players?.where((player) => player.data['team'] == 'team1').toList() ??
               <Document>[];

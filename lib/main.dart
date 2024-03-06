@@ -1,3 +1,4 @@
+import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/ExcutionPage.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         SignIn.routeName: (context) => const SignIn(),
         SignUp.routeName: (context) => const SignUp(),
         NotificationPage.routeName: (context) => const NotificationPage(),
+        PlayerPrice.routeName: (context) => const PlayerPrice(),
         ExecutionPage.routeName: (context) => ExecutionPage(),
       },
       home: value == AuthStatus.authenticated ? MyHomePage() : const SignIn(),

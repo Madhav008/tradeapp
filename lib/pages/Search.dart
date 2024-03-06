@@ -1,4 +1,5 @@
 import 'package:appwrite/models.dart';
+import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +23,7 @@ class MatchListTile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           databaseAPI.setMatchData(ipodata?.data);
-          // Navigator.pushNamed(context, IPODetailPage.routeName);
+          Navigator.pushNamed(context, PlayerPrice.routeName);
         },
         child: Container(
           decoration: BoxDecoration(
