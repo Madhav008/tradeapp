@@ -7,8 +7,8 @@ import 'package:fanxange/pages/Notification.dart';
 import 'package:fanxange/pages/Search.dart';
 import 'package:provider/provider.dart';
 
-class IPOListPage extends StatelessWidget {
-  const IPOListPage({Key? key});
+class MatchListPage extends StatelessWidget {
+  const MatchListPage({Key? key});
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
@@ -32,12 +32,11 @@ class IPOListPage extends StatelessWidget {
     databaseAPI.seprateMatchList();
     return ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
         itemCount: databaseAPI.notStartedMatches.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else {
@@ -50,12 +49,11 @@ class IPOListPage extends StatelessWidget {
   ListView _openIpoList(DatabaseAPI databaseAPI) {
     return ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
         itemCount: databaseAPI.startedMatches.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else {
@@ -68,12 +66,11 @@ class IPOListPage extends StatelessWidget {
   ListView _closedIpoList(DatabaseAPI databaseAPI) {
     return ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
         itemCount: databaseAPI.completedMatches.length ?? 0,
         itemBuilder: (context, index) {
           if (databaseAPI.isLoading) {
             // Loading indicator when data is being fetched
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else {
@@ -86,13 +83,6 @@ class IPOListPage extends StatelessWidget {
   AppBar _appBar(BuildContext context) {
     return AppBar(
       actions: [
-        IconButton(
-          icon: Icon(
-            FontAwesomeIcons.magnifyingGlass, // Corrected the icon usage
-            color: Colors.grey[600],
-          ),
-          onPressed: () => Navigator.pushNamed(context, SearchPage.routeName),
-        ),
         IconButton(
           icon: Icon(
             FontAwesomeIcons.bell,

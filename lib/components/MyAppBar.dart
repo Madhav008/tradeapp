@@ -25,14 +25,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? [
               IconButton(
                 icon: Icon(
-                  FontAwesomeIcons.magnifyingGlass, // Corrected the icon usage
-                  color: Colors.grey[600],
-                ),
-                onPressed: () =>
-                    Navigator.pushNamed(context, SearchPage.routeName),
-              ),
-              IconButton(
-                icon: Icon(
                   FontAwesomeIcons.bell,
                   color: Colors.grey[600],
                 ),

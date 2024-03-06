@@ -24,24 +24,23 @@ class DatabaseAPI with ChangeNotifier {
   List<dynamic> get startedMatches => _startedMatches;
   List<dynamic> get completedMatches => _completedMatches;
 
-  var _searchipolist;
-  DocumentList? get searchipolist => _searchipolist;
+  var _matchdata;
+  Map<String, dynamic> get matchdata => _matchdata;
 
-  var _openIpoList;
-  DocumentList? get openIpoList => _openIpoList;
+  var _playersdata;
+  DocumentList? get playersdata => _playersdata;
 
-  var _closeIpoList;
-  DocumentList? get closeIpoList => _closeIpoList;
+  // Declare two lists for Team A and Team B players
+  List<dynamic> _teamAPlayers = [];
+  List<dynamic> _teamBPlayers = [];
 
-  var _ipodata;
-  Map<String, dynamic> get ipodata => _ipodata;
+  // Getters for the two lists
+  List<dynamic> get teamAPlayers => _teamAPlayers;
+  List<dynamic> get teamBPlayers => _teamBPlayers;
 
   // Loading state
   bool _isLoading = true;
   bool get isLoading => _isLoading;
-
-  var _ipographdata;
-  List<Document> get ipographdata => _ipographdata;
 
   // Constructor
   DatabaseAPI() {
@@ -76,6 +75,51 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
+  void getPlayersData() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      _playersdata = await databases.listDocuments(
+        databaseId: APPWRITE_DATABASE_ID,
+        collectionId: COLLECTION_Players,
+        queries: [
+          Query.equal('matchkey', [_matchdata['matchkey']]),
+        ],
+      );
+    } catch (e) {
+      print(e);
+    } finally {
+      _isLoading = false; // Set loading state to false
+      notifyListeners();
+    }
+  }
+
+  void sepratePlayerList() {
+    // Clear existing lists before updating
+    _teamAPlayers.clear();
+    _teamBPlayers.clear();
+
+    if (_playersdata != null) {
+      // Convert DocumentList to List
+      List<Document>? players = _playersdata!.documents;
+
+      // Separate players into Team A and Team B
+      _teamAPlayers =
+          players?.where((player) => player.data['team'] == 'team1').toList() ??
+              <Document>[];
+
+      _teamBPlayers =
+          players?.where((player) => player.data['team'] == 'team2').toList() ??
+              <Document>[];
+
+      print('Team A Players: $_teamAPlayers');
+      print('Team B Players: $_teamBPlayers');
+
+      notifyListeners();
+    }
+  }
+
   void seprateMatchList() {
     if (_matchlist != null) {
       // Convert DocumentList to List
@@ -97,61 +141,33 @@ class DatabaseAPI with ChangeNotifier {
               .toList() ??
           <Document>[];
 
-      print('Not Started Matches: $_notStartedMatches');
-      print('Started Matches: $_startedMatches');
-      print('Completed Matches: $_completedMatches');
-
       notifyListeners();
     }
   }
 
-  void setIpoData(Map<String, dynamic>? newData) {
-    _ipodata = newData;
-    getIPOGraph(newData?['id']);
+  void setMatchData(Map<String, dynamic>? newData) {
+    _matchdata = newData;
+    print(_matchdata['seriesname']);
+    getPlayersData();
     notifyListeners();
   }
-
-  void getIPOGraph(int id) async {
-    try {
-      _isLoading = true; // Set loading state to true
-      if (_ipographdata != null) {
-        _ipographdata.clear();
-      }
-      notifyListeners();
-      // Fetch data from the database
-      var graphData = await databases.listDocuments(
-        databaseId: APPWRITE_DATABASE_ID,
-        collectionId: COLLECTION_IPOGRAPH,
-        queries: [
-          Query.equal('ipoid', [id])
-        ],
-      );
-
-      // Iterate through the fetched documents and transform the data
-      _ipographdata = graphData.documents;
-    } catch (e) {
-      print(e);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  void searchIPO(String query) async {
-    try {
-      _isLoading = true; // Set loading state to true
-      notifyListeners();
-      _searchipolist = await databases.listDocuments(
-          databaseId: APPWRITE_DATABASE_ID,
-          collectionId: COLLECTION_IPO,
-          queries: [Query.search('name', query)]);
-
-      print(_searchipolist);
-    } catch (e) {
-      print(e);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
 }
+
+//   void searchIPO(String query) async {
+//     try {
+//       _isLoading = true; // Set loading state to true
+//       notifyListeners();
+//       _searchipolist = await databases.listDocuments(
+//           databaseId: APPWRITE_DATABASE_ID,
+//           collectionId: COLLECTION_IPO,
+//           queries: [Query.search('name', query)]);
+
+//       print(_searchipolist);
+//     } catch (e) {
+//       print(e);
+//     } finally {
+//       _isLoading = false;
+//       notifyListeners();
+//     }
+//   }
+// }

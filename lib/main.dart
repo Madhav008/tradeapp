@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/pages/redundant/Dashboard.dart';
 import 'package:fanxange/pages/ExcutionPage.dart';
 import 'package:fanxange/pages/HomePage.dart';
-import 'package:fanxange/pages/redundant/IpoDetail.dart';
 import 'package:fanxange/pages/Notification.dart';
-import 'package:fanxange/pages/redundant/Orders.dart';
 import 'package:fanxange/pages/Search.dart';
 import 'package:fanxange/pages/SignIn.dart';
 import 'package:fanxange/pages/SignUp.dart';
@@ -43,11 +40,7 @@ class MyApp extends StatelessWidget {
         Onboarding.routeName: (context) => const Onboarding(),
         SignIn.routeName: (context) => const SignIn(),
         SignUp.routeName: (context) => const SignUp(),
-        Dashboard.routeName: (context) => const Dashboard(),
         NotificationPage.routeName: (context) => const NotificationPage(),
-        SearchPage.routeName: (context) => const SearchPage(),
-        OrdersPage.routeName: (context) => const OrdersPage(),
-        IPODetailPage.routeName: (context) => IPODetailPage(),
         ExecutionPage.routeName: (context) => ExecutionPage(),
       },
       home: value == AuthStatus.authenticated ? MyHomePage() : const SignIn(),

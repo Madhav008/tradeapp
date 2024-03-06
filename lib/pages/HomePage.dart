@@ -2,8 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fanxange/pages/redundant/Dashboard.dart';
-import 'package:fanxange/pages/IPOListPage.dart';
+import 'package:fanxange/pages/MatchListPage.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -13,9 +12,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
-    IPOListPage(),
-    IPOListPage(),
-    Dashboard(),
+    MatchListPage(),
+    MatchListPage(),
+    MatchListPage(),
   ];
 
   void _onItemTapped(int index) {

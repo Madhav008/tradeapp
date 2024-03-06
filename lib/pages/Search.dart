@@ -3,60 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/pages/redundant/IpoDetail.dart';
 import 'package:provider/provider.dart';
-
-class SearchPage extends StatelessWidget {
-  static String routeName = "/search";
-  const SearchPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final databaseApi = context.watch<DatabaseAPI>();
-    // databaseApi.searchIPO(searchController.text);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Search IPO',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: ListView(
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            child: TextField(
-              onChanged: (value) {
-                databaseApi.searchIPO(value);
-              },
-              decoration: InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
-              ),
-            ),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: databaseApi.searchipolist?.documents.length ?? 0,
-            itemBuilder: (context, index) {
-              if (databaseApi.isLoading) {
-                // Loading indicator when data is being fetched
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                var ipodata = databaseApi.searchipolist?.documents[index];
-                return MatchListTile(ipodata: ipodata);
-              }
-            },
-          )
-        ],
-      ),
-    );
-  }
-}
 
 class MatchListTile extends StatelessWidget {
   const MatchListTile({
@@ -74,8 +21,8 @@ class MatchListTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          // databaseAPI.setIpoData(ipodata);
-          Navigator.pushNamed(context, IPODetailPage.routeName);
+          databaseAPI.setMatchData(ipodata?.data);
+          // Navigator.pushNamed(context, IPODetailPage.routeName);
         },
         child: Container(
           decoration: BoxDecoration(
@@ -90,8 +37,8 @@ class MatchListTile extends StatelessWidget {
               children: [
                 Image.network(
                   ipodata?.data['team1logo'] ?? '',
-                  height: 40,
-                  width: 40,
+                  height: 60,
+                  width: 60,
                 ),
                 Expanded(
                   child: Column(
@@ -111,12 +58,12 @@ class MatchListTile extends StatelessWidget {
                           Text(
                             (ipodata?.data['team1display']),
                             style: GoogleFonts.inter(
-                              fontSize: 15,
-                              color: Colors.grey[700],
-                            ),
+                                fontSize: 15,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            (" VS "),
+                            (" vs "),
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               color: Colors.grey[700],
@@ -125,9 +72,9 @@ class MatchListTile extends StatelessWidget {
                           Text(
                             (ipodata?.data['team2display']),
                             style: GoogleFonts.inter(
-                              fontSize: 15,
-                              color: Colors.grey[700],
-                            ),
+                                fontSize: 15,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -136,27 +83,38 @@ class MatchListTile extends StatelessWidget {
                       ),
                       //Design a container in which timer is going hh:mm:ss
                       Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: ipodata?.data?['status'] == "notstarted"
-                              ? CountdownTimer(
-                                  endTime: DateTime.parse(
-                                          ipodata?.data?['start_date'] ?? '')
-                                      .millisecondsSinceEpoch,
-                                  textStyle: TextStyle(
-                                      fontSize: 14, color: Colors.black),
-                                )
-                              : Text("Pending")),
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ipodata?.data?['status'] == "notstarted"
+                            ? CountdownTimer(
+                                endTime: DateTime.parse(
+                                        ipodata?.data?['start_date'] ?? '')
+                                    .millisecondsSinceEpoch,
+                                textStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : Text(
+                                ipodata?.data?['status'] == "completed"
+                                    ? "Completed"
+                                    : "Pending",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                      ),
                     ],
                   ),
                 ),
                 Image.network(
                   ipodata?.data['team2logo'] ?? '',
-                  height: 40,
-                  width: 40,
+                  height: 60,
+                  width: 60,
                 ),
               ],
             ),
