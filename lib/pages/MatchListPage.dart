@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,63 +30,63 @@ class MatchListPage extends StatelessWidget {
     );
   }
 
-  Skeletonizer _upcomingMatchList(DatabaseAPI databaseAPI) {
-    // databaseAPI.seprateMatchList();
-    return Skeletonizer(
-      enabled: databaseAPI.isMatchLoading,
-      child: RefreshIndicator(
-        onRefresh: () {
-          return Future.delayed(Duration(seconds: 1), () {
-            databaseAPI.seprateMatchList();
-          });
-        },
+  Widget _upcomingMatchList(DatabaseAPI databaseAPI) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        databaseAPI.seprateMatchList();
+      },
+      child: Skeletonizer(
+        enabled: databaseAPI.isMatchLoading,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: databaseAPI.notStartedMatches?.documents.length ?? 0,
+          itemBuilder: (context, index) {
+            var ipodata = databaseAPI.notStartedMatches?.documents[index];
+            return MatchListTile(ipodata: ipodata);
+          },
+        ),
+      ),
+    );
+  }
+
+  RefreshIndicator _openMatchList(DatabaseAPI databaseAPI) {
+    return RefreshIndicator(
+      onRefresh: () {
+        return Future.delayed(Duration(seconds: 1), () {
+          databaseAPI.seprateMatchList();
+        });
+      },
+      child: Skeletonizer(
+        enabled: databaseAPI.isMatchLoading,
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: databaseAPI.notStartedMatches?.documents.length ?? 0,
+            itemCount: databaseAPI.startedMatches?.documents.length ?? 0,
             itemBuilder: (context, index) {
-              var ipodata = databaseAPI.notStartedMatches?.documents[index];
+              var ipodata = databaseAPI.startedMatches?.documents[index];
               return MatchListTile(ipodata: ipodata);
             }),
       ),
     );
   }
 
-  Skeletonizer _openMatchList(DatabaseAPI databaseAPI) {
-    return Skeletonizer(
+  RefreshIndicator _closedMatchList(DatabaseAPI databaseAPI) {
+    return RefreshIndicator(
+      onRefresh: () {
+        return Future.delayed(Duration(seconds: 1), () {
+          databaseAPI.seprateMatchList();
+        });
+      },
+      child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,
-        child: RefreshIndicator(
-          onRefresh: () {
-            return Future.delayed(Duration(seconds: 1), () {
-              databaseAPI.seprateMatchList();
-            });
-          },
-          child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: databaseAPI.startedMatches?.documents.length ?? 0,
-              itemBuilder: (context, index) {
-                var ipodata = databaseAPI.startedMatches?.documents[index];
-                return MatchListTile(ipodata: ipodata);
-              }),
-        ));
-  }
-
-  Skeletonizer _closedMatchList(DatabaseAPI databaseAPI) {
-    return Skeletonizer(
-        enabled: databaseAPI.isMatchLoading,
-        child: RefreshIndicator(
-          onRefresh: () {
-            return Future.delayed(Duration(seconds: 1), () {
-              databaseAPI.seprateMatchList();
-            });
-          },
-          child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: databaseAPI.completedMatches?.documents.length ?? 0,
-              itemBuilder: (context, index) {
-                var ipodata = databaseAPI.completedMatches?.documents[index];
-                return MatchListTile(ipodata: ipodata);
-              }),
-        ));
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: databaseAPI.completedMatches?.documents.length ?? 0,
+            itemBuilder: (context, index) {
+              var ipodata = databaseAPI.completedMatches?.documents[index];
+              return MatchListTile(ipodata: ipodata);
+            }),
+      ),
+    );
   }
 
   AppBar _appBar(BuildContext context) {

@@ -112,7 +112,7 @@ class DatabaseAPI with ChangeNotifier {
     try {
       // Check if _matchlist is not null
       _isMatchLoading = true;
-      // notifyListeners();
+      notifyListeners();
 
       print("Seprate Matches List Called");
       // Filter matches based on status
