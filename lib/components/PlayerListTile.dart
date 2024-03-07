@@ -161,122 +161,120 @@ class PlayerListTile extends StatelessWidget {
 
   void _showPlayerDetailsModal(BuildContext context, String type) {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          width: double.infinity,
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                // ignore: sort_child_properties_last
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    type == 'sell' ? "Sell Player" : "Buy Player",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                width: double.infinity,
-                height: 42,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                  color: type == 'sell'
-                      ? const Color(0xFF21899C)
-                      : const Color(0xFFFE9879),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 40,
-                backgroundImage: NetworkImage(playersdata?.data['image'] ?? ''),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                width: 70,
-                height: 25,
-                decoration: BoxDecoration(
-                  color: type == 'sell'
-                      ? const Color(0xFF21899C)
-                      : const Color(0xFFFE9879),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Center(
-                  child: Text(
-                    playersdata?.data['teamname'] ?? 'Team Name',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-              Text(
-                playersdata?.data['role'] ?? 'Player Role',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Initial price and number of shares
-              _buildDetailColumn(
-                'Initial Price',
-                '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
-              ),
-              _buildDetailColumn(
-                'No. of Shares',
-                '0', // Replace with the actual value
-              ),
-              _buildDetailColumn(
-                'Total Amount',
-                '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
-              ),
-              _buildDetailColumn(
-                'Platform fees (10%)',
-                '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
-              ),
-              const Expanded(child: SizedBox(height: 16)),
-              // Buy and Sell buttons at the bottom
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle the action (buy or sell)
-                      // You can add logic here to execute the order
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: type == 'sell'
-                          ? const Color(0xFF21899C)
-                          : const Color(0xFFFE9879),
-                    ),
-                    child: const Text(
-                      "Execute Order",
-                      style: TextStyle(
+        return SingleChildScrollView(
+          child: Container(
+            width: double.infinity,
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      type == 'sell' ? "Sell Player" : "Buy Player",
+                      style: const TextStyle(
                         fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  width: double.infinity,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                    color: type == 'sell'
+                        ? const Color(0xFF21899C)
+                        : const Color(0xFFFE9879),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 40,
+                  backgroundImage:
+                      NetworkImage(playersdata?.data['image'] ?? ''),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: 70,
+                  height: 25,
+                  decoration: BoxDecoration(
+                    color: type == 'sell'
+                        ? const Color(0xFF21899C)
+                        : const Color(0xFFFE9879),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      playersdata?.data['teamname'] ?? 'Team Name',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                Text(
+                  playersdata?.data['role'] ?? 'Player Role',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Initial price and number of shares
+                _buildDetailColumn(
+                  'Initial Price',
+                  '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
+                ),
+                ShareCounter(),
+                _buildDetailColumn(
+                  'Total Amount',
+                  '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
+                ),
+                _buildDetailColumn(
+                  'Platform fees (10%)',
+                  '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
+                ),
+                const SizedBox(height: 16),
+                // Buy and Sell buttons at the bottom
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle the action (buy or sell)
+                        // You can add logic here to execute the order
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: type == 'sell'
+                            ? const Color(0xFF21899C)
+                            : const Color(0xFFFE9879),
+                      ),
+                      child: const Text(
+                        "Execute Order",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -303,6 +301,101 @@ class PlayerListTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 2),
+          const Divider(),
+        ],
+      ),
+    );
+  }
+}
+
+class ShareCounter extends StatefulWidget {
+  @override
+  _ShareCounterState createState() => _ShareCounterState();
+}
+
+class _ShareCounterState extends State<ShareCounter> {
+  late TextEditingController sharesController;
+
+  @override
+  void initState() {
+    super.initState();
+    sharesController =
+        TextEditingController(text: '1'); // Set initial value to '1'
+  }
+
+  @override
+  void dispose() {
+    sharesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'No. of Shares',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: Colors.grey), // Add border for visibility
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        // Decrease shares
+                        int currentValue =
+                            int.tryParse(sharesController.text) ?? 0;
+                        if (currentValue > 1) {
+                          setState(() {
+                            sharesController.text =
+                                (currentValue - 1).toString();
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.remove),
+                    ),
+                    SizedBox(
+                      width: 30, // Adjusted width for the TextField
+                      height: 30, // Adjusted height for the TextField
+                      child: TextField(
+                        controller: sharesController,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.zero,
+                          isDense: true, // Reduces the height of the TextField
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        // Increase shares
+                        int currentValue =
+                            int.tryParse(sharesController.text) ?? 0;
+                        setState(() {
+                          sharesController.text = (currentValue + 1).toString();
+                        });
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
           const Divider(),
         ],
       ),
