@@ -33,40 +33,59 @@ class MatchListPage extends StatelessWidget {
     // databaseAPI.seprateMatchList();
     return Skeletonizer(
       enabled: databaseAPI.isMatchLoading,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: databaseAPI.notStartedMatches?.documents.length ?? 0,
-          itemBuilder: (context, index) {
-            var ipodata = databaseAPI.notStartedMatches?.documents[index];
-            return MatchListTile(ipodata: ipodata);
-          }),
+      child: RefreshIndicator(
+        onRefresh: () {
+          return Future.delayed(Duration(seconds: 1), () {
+            databaseAPI.seprateMatchList();
+          });
+        },
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: databaseAPI.notStartedMatches?.documents.length ?? 0,
+            itemBuilder: (context, index) {
+              var ipodata = databaseAPI.notStartedMatches?.documents[index];
+              return MatchListTile(ipodata: ipodata);
+            }),
+      ),
     );
   }
 
   Skeletonizer _openMatchList(DatabaseAPI databaseAPI) {
     return Skeletonizer(
-      enabled: databaseAPI.isMatchLoading,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: databaseAPI.startedMatches?.documents.length ?? 0,
-          itemBuilder: (context, index) {
-            var ipodata = databaseAPI.startedMatches?.documents[index];
-            return MatchListTile(ipodata: ipodata);
-          }),
-    );
+        enabled: databaseAPI.isMatchLoading,
+        child: RefreshIndicator(
+          onRefresh: () {
+            return Future.delayed(Duration(seconds: 1), () {
+              databaseAPI.seprateMatchList();
+            });
+          },
+          child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: databaseAPI.startedMatches?.documents.length ?? 0,
+              itemBuilder: (context, index) {
+                var ipodata = databaseAPI.startedMatches?.documents[index];
+                return MatchListTile(ipodata: ipodata);
+              }),
+        ));
   }
 
   Skeletonizer _closedMatchList(DatabaseAPI databaseAPI) {
     return Skeletonizer(
-      enabled: databaseAPI.isMatchLoading,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: databaseAPI.completedMatches?.documents.length ?? 0,
-          itemBuilder: (context, index) {
-            var ipodata = databaseAPI.completedMatches?.documents[index];
-            return MatchListTile(ipodata: ipodata);
-          }),
-    );
+        enabled: databaseAPI.isMatchLoading,
+        child: RefreshIndicator(
+          onRefresh: () {
+            return Future.delayed(Duration(seconds: 1), () {
+              databaseAPI.seprateMatchList();
+            });
+          },
+          child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: databaseAPI.completedMatches?.documents.length ?? 0,
+              itemBuilder: (context, index) {
+                var ipodata = databaseAPI.completedMatches?.documents[index];
+                return MatchListTile(ipodata: ipodata);
+              }),
+        ));
   }
 
   AppBar _appBar(BuildContext context) {

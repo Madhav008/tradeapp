@@ -32,20 +32,25 @@ class PlayerPrice extends StatelessWidget {
   }
 
   Skeletonizer _allPlayers(DatabaseAPI databaseAPI) {
-    databaseAPI.seprateMatchList();
-
     return Skeletonizer(
       enabled: databaseAPI.isPlayerLoading,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        // shrinkWrap: true,
-        itemCount: databaseAPI.playersdata?.documents.length,
-        itemBuilder: (context, index) {
-          var ipodata = databaseAPI.playersdata?.documents[index];
-          return PlayerListTile(playersdata: ipodata);
+      child: RefreshIndicator(
+        onRefresh: () {
+          return Future.delayed(Duration(seconds: 1), () {
+            databaseAPI.getPlayersData();
+          });
         },
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+          // shrinkWrap: true,
+          itemCount: databaseAPI.playersdata?.documents.length,
+          itemBuilder: (context, index) {
+            var ipodata = databaseAPI.playersdata?.documents[index];
+            return PlayerListTile(playersdata: ipodata);
+          },
+        ),
       ),
     );
   }
