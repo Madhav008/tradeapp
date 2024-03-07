@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class PlayerPrice extends StatelessWidget {
   static String routeName = "/players";
@@ -30,25 +31,28 @@ class PlayerPrice extends StatelessWidget {
     );
   }
 
-  GridView _allPlayers(DatabaseAPI databaseAPI) {
+  Skeletonizer _allPlayers(DatabaseAPI databaseAPI) {
     databaseAPI.seprateMatchList();
 
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+    return Skeletonizer(
+      enabled: databaseAPI.isPlayerLoading,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+        // shrinkWrap: true,
+        itemCount: databaseAPI.playersdata?.documents.length,
+        itemBuilder: (context, index) {
+          var ipodata = databaseAPI.playersdata?.documents[index];
+          return PlayerListTile(playersdata: ipodata);
+        },
       ),
-      // shrinkWrap: true,
-      itemCount: databaseAPI?.playersdata?.documents.length,
-      itemBuilder: (context, index) {
-        var ipodata = databaseAPI?.playersdata?.documents[index];
-        return PlayerListTile(playersdata: ipodata);
-      },
     );
   }
 
   GridView _teamA(DatabaseAPI databaseAPI) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
       // shrinkWrap: true,
@@ -62,7 +66,7 @@ class PlayerPrice extends StatelessWidget {
 
   GridView _teamB(DatabaseAPI databaseAPI) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
       // shrinkWrap: true,

@@ -6,78 +6,67 @@ import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/Notification.dart';
 import 'package:fanxange/pages/Search.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class MatchListPage extends StatelessWidget {
   const MatchListPage({Key? key});
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
-    // databaseAPI.setUpcomingList();
+    // databaseAPI.seprateMatchList();
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
         appBar: _appBar(context),
         body: TabBarView(
           children: [
-            _upcomingIpoList(databaseAPI),
-            _openIpoList(databaseAPI),
-            _closedIpoList(databaseAPI), // Adjust as needed
+            _upcomingMatchList(databaseAPI),
+            _openMatchList(databaseAPI),
+            _closedMatchList(databaseAPI), // Adjust as needed
           ],
         ),
       ),
     );
   }
 
-  ListView _upcomingIpoList(DatabaseAPI databaseAPI) {
-    databaseAPI.seprateMatchList();
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: databaseAPI.notStartedMatches.length ?? 0,
-        itemBuilder: (context, index) {
-          if (databaseAPI.isLoading) {
-            // Loading indicator when data is being fetched
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            var ipodata = databaseAPI.notStartedMatches[index];
+  Skeletonizer _upcomingMatchList(DatabaseAPI databaseAPI) {
+    // databaseAPI.seprateMatchList();
+    return Skeletonizer(
+      enabled: databaseAPI.isMatchLoading,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: databaseAPI.notStartedMatches?.documents.length ?? 0,
+          itemBuilder: (context, index) {
+            var ipodata = databaseAPI.notStartedMatches?.documents[index];
             return MatchListTile(ipodata: ipodata);
-          }
-        });
+          }),
+    );
   }
 
-  ListView _openIpoList(DatabaseAPI databaseAPI) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: databaseAPI.startedMatches.length ?? 0,
-        itemBuilder: (context, index) {
-          if (databaseAPI.isLoading) {
-            // Loading indicator when data is being fetched
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            var ipodata = databaseAPI.startedMatches[index];
+  Skeletonizer _openMatchList(DatabaseAPI databaseAPI) {
+    return Skeletonizer(
+      enabled: databaseAPI.isMatchLoading,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: databaseAPI.startedMatches?.documents.length ?? 0,
+          itemBuilder: (context, index) {
+            var ipodata = databaseAPI.startedMatches?.documents[index];
             return MatchListTile(ipodata: ipodata);
-          }
-        });
+          }),
+    );
   }
 
-  ListView _closedIpoList(DatabaseAPI databaseAPI) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: databaseAPI.completedMatches.length ?? 0,
-        itemBuilder: (context, index) {
-          if (databaseAPI.isLoading) {
-            // Loading indicator when data is being fetched
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            var ipodata = databaseAPI.completedMatches[index];
+  Skeletonizer _closedMatchList(DatabaseAPI databaseAPI) {
+    return Skeletonizer(
+      enabled: databaseAPI.isMatchLoading,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: databaseAPI.completedMatches?.documents.length ?? 0,
+          itemBuilder: (context, index) {
+            var ipodata = databaseAPI.completedMatches?.documents[index];
             return MatchListTile(ipodata: ipodata);
-          }
-        });
+          }),
+    );
   }
 
   AppBar _appBar(BuildContext context) {

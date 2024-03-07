@@ -17,7 +17,6 @@ class MatchListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -89,7 +88,7 @@ class MatchListTile extends StatelessWidget {
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: ipodata?.data?['status'] == "notstarted"
+                        child: ipodata?.data['status'] == "notstarted"
                             ? CountdownTimer(
                                 endTime: DateTime.parse(
                                         ipodata?.data?['start_date'] ?? '')
@@ -100,7 +99,7 @@ class MatchListTile extends StatelessWidget {
                                     fontWeight: FontWeight.bold),
                               )
                             : Text(
-                                ipodata?.data?['status'] == "completed"
+                                ipodata?.data['status'] == "completed"
                                     ? "Completed"
                                     : "Pending",
                                 style: TextStyle(

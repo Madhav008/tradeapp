@@ -15,14 +15,14 @@ class DatabaseAPI with ChangeNotifier {
   DocumentList? get matchlist => _matchlist;
 
   // Declare three lists globally
-  List<dynamic> _notStartedMatches = [];
-  List<dynamic> _startedMatches = [];
-  List<dynamic> _completedMatches = [];
+  DocumentList? _notStartedMatches;
+  DocumentList? _startedMatches;
+  DocumentList? _completedMatches;
 
   // Getters for the three lists
-  List<dynamic> get notStartedMatches => _notStartedMatches;
-  List<dynamic> get startedMatches => _startedMatches;
-  List<dynamic> get completedMatches => _completedMatches;
+  DocumentList? get notStartedMatches => _notStartedMatches;
+  DocumentList? get startedMatches => _startedMatches;
+  DocumentList? get completedMatches => _completedMatches;
 
   var _matchdata;
   Map<String, dynamic> get matchdata => _matchdata;
@@ -39,13 +39,15 @@ class DatabaseAPI with ChangeNotifier {
   List<dynamic> get teamBPlayers => _teamBPlayers;
 
   // Loading state
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
+  bool _isMatchLoading = true;
+  bool _isPlayerLoading = true;
+
+  bool get isMatchLoading => _isMatchLoading;
+  bool get isPlayerLoading => _isPlayerLoading;
 
   // Constructor
   DatabaseAPI() {
     init();
-    getMatchesList();
     seprateMatchList();
   }
 
@@ -58,26 +60,9 @@ class DatabaseAPI with ChangeNotifier {
     databases = Databases(client);
   }
 
-  getMatchesList() async {
-    try {
-      _isLoading = true;
-      notifyListeners();
-
-      _matchlist = await databases.listDocuments(
-        databaseId: APPWRITE_DATABASE_ID,
-        collectionId: COLLECTION_Maches,
-      );
-    } catch (e) {
-      print(e);
-    } finally {
-      _isLoading = false; // Set loading state to false
-      notifyListeners();
-    }
-  }
-
   void getPlayersData() async {
     try {
-      _isLoading = true;
+      _isPlayerLoading = true;
       notifyListeners();
 
       _playersdata = await databases.listDocuments(
@@ -90,7 +75,7 @@ class DatabaseAPI with ChangeNotifier {
     } catch (e) {
       print(e);
     } finally {
-      _isLoading = false; // Set loading state to false
+      _isPlayerLoading = false; // Set loading state to false
       notifyListeners();
     }
 
@@ -107,7 +92,7 @@ class DatabaseAPI with ChangeNotifier {
       List<Document>? players = _playersdata!.documents;
 
       // Separate players into Team A and Team B
-  
+
       _teamAPlayers =
           players?.where((player) => player.data['team'] == 'team1').toList() ??
               <Document>[];
@@ -123,30 +108,46 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
-  void seprateMatchList() {
-    if (_matchlist != null) {
-      // Convert DocumentList to List
-      List<Document>? matches = _matchlist?.documents;
+  void seprateMatchList() async {
+    try {
+      // Check if _matchlist is not null
+      _isMatchLoading = true;
+      // notifyListeners();
 
+      print("Seprate Matches List Called");
       // Filter matches based on status
-      _notStartedMatches = matches
-              ?.where((match) => match.data['status'] == 'notstarted')
-              .toList() ??
-          <Document>[];
+      _notStartedMatches = await databases.listDocuments(
+        databaseId: APPWRITE_DATABASE_ID,
+        collectionId: COLLECTION_Maches,
+        queries: [
+          Query.equal('status', ["notstarted"]),
+        ],
+      );
 
-      _startedMatches = matches
-              ?.where((match) => match.data['status'] == 'started')
-              .toList() ??
-          <Document>[];
+      _startedMatches = await databases.listDocuments(
+        databaseId: APPWRITE_DATABASE_ID,
+        collectionId: COLLECTION_Maches,
+        queries: [
+          Query.equal('status', ["started"]),
+        ],
+      );
 
-      _completedMatches = matches
-              ?.where((match) => match.data['status'] == 'completed')
-              .toList() ??
-          <Document>[];
-
+      _completedMatches = await databases.listDocuments(
+        databaseId: APPWRITE_DATABASE_ID,
+        collectionId: COLLECTION_Maches,
+        queries: [
+          Query.equal('status', ["completed"]),
+        ],
+      );
+    } catch (e) {
+      print("Error in seprateMatchList: $e");
+    } finally {
+      _isMatchLoading = false;
       notifyListeners();
     }
   }
+
+  //
 
   void setMatchData(Map<String, dynamic>? newData) {
     _matchdata = newData;
@@ -155,22 +156,3 @@ class DatabaseAPI with ChangeNotifier {
     notifyListeners();
   }
 }
-
-//   void searchIPO(String query) async {
-//     try {
-//       _isLoading = true; // Set loading state to true
-//       notifyListeners();
-//       _searchipolist = await databases.listDocuments(
-//           databaseId: APPWRITE_DATABASE_ID,
-//           collectionId: COLLECTION_IPO,
-//           queries: [Query.search('name', query)]);
-
-//       print(_searchipolist);
-//     } catch (e) {
-//       print(e);
-//     } finally {
-//       _isLoading = false;
-//       notifyListeners();
-//     }
-//   }
-// }

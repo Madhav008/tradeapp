@@ -1,6 +1,8 @@
 import 'package:appwrite/models.dart';
+import 'package:fanxange/appwrite/database_api.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class PlayerListTile extends StatelessWidget {
   const PlayerListTile({
@@ -29,7 +31,7 @@ class PlayerListTile extends StatelessWidget {
                   height: 60,
                   width: 60,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 Expanded(
@@ -52,12 +54,16 @@ class PlayerListTile extends StatelessWidget {
                           height: 1.2,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 2,
                       ),
                       Container(
                         width: 70,
                         height: 25,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFE9879),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                         child: Center(
                           child: Text(
                             playersdata?.data['teamname'] ?? '',
@@ -67,10 +73,6 @@ class PlayerListTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFE9879),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
                       )
                     ],
                   ),
@@ -78,7 +80,7 @@ class PlayerListTile extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -88,7 +90,7 @@ class PlayerListTile extends StatelessWidget {
                 "Bought 0",
                 style: GoogleFonts.openSans(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFFE9879),
+                  color: const Color(0xFFFE9879),
                   fontSize: 14,
                 ),
               ),
@@ -96,7 +98,7 @@ class PlayerListTile extends StatelessWidget {
                 "Sold 0",
                 style: GoogleFonts.openSans(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF21899C),
+                  color: const Color(0xFF21899C),
                   fontSize: 14,
                 ),
               ),
@@ -106,14 +108,15 @@ class PlayerListTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(
+                  color: const Color.fromRGBO(
                       254, 152, 121, 0.8), // Adjusted opacity for Buy button
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Text(
-                  "Buy: \$${playersdata?.data['buy_rate']}",
+                  "Buy: ₹${playersdata?.data['buy_rate'].toString() ?? ''}",
                   style: GoogleFonts.openSans(
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -122,17 +125,18 @@ class PlayerListTile extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors
                       .transparent, // Transparent background for Sell button
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
-                      color: Color(
+                      color: const Color(
                           0xFF21899C)), // Optional border for visibility
                 ),
                 child: Text(
-                  "Sell: \$${playersdata?.data['sell_rate']}",
+                  "Sell: ₹${playersdata?.data['sell_rate'].toString() ?? ''}",
                   style: GoogleFonts.openSans(
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF21899C),
