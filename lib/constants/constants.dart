@@ -10,11 +10,11 @@ const String APPWRITE_URL = "https://appwrite.fanxange.live/v1";
 // ignore: constant_identifier_names
 const String APPWRITE_DATABASE_ID = "ipopremium";
 const String COLLECTION_transactions = "transactions";
-const String COLLECTION_orderook = "orderook";
 const String COLLECTION_orders = "orders";
 const String COLLECTION_wallet = "wallet";
 const String COLLECTION_Maches = "matches";
 const String COLLECTION_Players = "Players";
+const String COLLECTION_Fees = "fees";
 
 
 // const int primaryColor = "0xFFE5F64A";

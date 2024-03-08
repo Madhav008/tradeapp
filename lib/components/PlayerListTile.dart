@@ -1,6 +1,9 @@
 import 'package:appwrite/models.dart';
+import 'package:fanxange/appwrite/auth_api.dart';
+import 'package:fanxange/appwrite/database_api.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class PlayerListTile extends StatelessWidget {
   const PlayerListTile({
@@ -12,6 +15,9 @@ class PlayerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authApi = context.read<AuthAPI>();
+    final databaseApi = context.read<DatabaseAPI>();
+
     return Card(
       color: Colors.white,
       elevation: 2,
@@ -107,7 +113,13 @@ class PlayerListTile extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  return _showPlayerDetailsModal(context, "buy");
+                  databaseApi.setOrderType("buy");
+                  databaseApi.setPlayerPrice(
+                    (playersdata?.data['buy_rate'] ?? 0).toInt(),
+                  );
+                  databaseApi.setUserId(authApi.userid);
+                  databaseApi.clearOrder();
+                  _showPlayerDetailsModal(context, "buy");
                 },
                 child: Container(
                   padding:
@@ -129,7 +141,13 @@ class PlayerListTile extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  return _showPlayerDetailsModal(context, "sell");
+                  databaseApi.setOrderType("sell");
+                  databaseApi.setPlayerPrice(
+                    (playersdata?.data['sell_rate'] ?? 0).toInt(),
+                  );
+                  databaseApi.setUserId(authApi.userid);
+                  databaseApi.clearOrder();
+                  _showPlayerDetailsModal(context, "sell");
                 },
                 child: Container(
                   padding:
@@ -164,6 +182,7 @@ class PlayerListTile extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
+        final databaseApi = context.watch<DatabaseAPI>();
         return SingleChildScrollView(
           child: Container(
             width: double.infinity,
@@ -173,17 +192,6 @@ class PlayerListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      type == 'sell' ? "Sell Player" : "Buy Player",
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
                   width: double.infinity,
                   height: 42,
                   decoration: BoxDecoration(
@@ -194,6 +202,17 @@ class PlayerListTile extends StatelessWidget {
                     color: type == 'sell'
                         ? const Color(0xFF21899C)
                         : const Color(0xFFFE9879),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      type == 'sell' ? "Sell Player" : "Buy Player",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -224,6 +243,15 @@ class PlayerListTile extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                Text(
+                  playersdata?.data['name'] ?? 'Player Name',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
                 Text(
                   playersdata?.data['role'] ?? 'Player Role',
                   style: const TextStyle(
@@ -231,20 +259,22 @@ class PlayerListTile extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 // Initial price and number of shares
                 _buildDetailColumn(
                   'Initial Price',
-                  '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
+                  '₹ ${type == 'sell' ? playersdata?.data['sell_rate'] : playersdata?.data['buy_rate']}',
                 ),
-                ShareCounter(),
-                _buildDetailColumn(
-                  'Total Amount',
-                  '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
-                ),
+                const ShareCounter(), // Updated to const
+
                 _buildDetailColumn(
                   'Platform fees (10%)',
-                  '₹ ${playersdata?.data['buy_rate'].toString() ?? ''}',
+                  '₹ ${databaseApi.fees}',
+                ),
+                _buildDetailColumn(
+                  'Total Amount',
+                  '₹ ${databaseApi.totalAmount}',
+                  // '₹ ',
                 ),
                 const SizedBox(height: 16),
                 // Buy and Sell buttons at the bottom
@@ -257,6 +287,9 @@ class PlayerListTile extends StatelessWidget {
                       onPressed: () {
                         // Handle the action (buy or sell)
                         // You can add logic here to execute the order
+                        databaseApi.createOrder();
+
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         primary: type == 'sell'
@@ -308,29 +341,13 @@ class PlayerListTile extends StatelessWidget {
   }
 }
 
-class ShareCounter extends StatefulWidget {
-  @override
-  _ShareCounterState createState() => _ShareCounterState();
-}
-
-class _ShareCounterState extends State<ShareCounter> {
-  late TextEditingController sharesController;
-
-  @override
-  void initState() {
-    super.initState();
-    sharesController =
-        TextEditingController(text: '1'); // Set initial value to '1'
-  }
-
-  @override
-  void dispose() {
-    sharesController.dispose();
-    super.dispose();
-  }
+class ShareCounter extends StatelessWidget {
+  const ShareCounter({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final databaseAPI = context.watch<DatabaseAPI>();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -343,50 +360,38 @@ class _ShareCounterState extends State<ShareCounter> {
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
               Container(
+                height: 35,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: Colors.grey), // Add border for visibility
+                  border: Border.all(color: Colors.grey),
                 ),
                 child: Row(
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Decrease shares
-                        int currentValue =
-                            int.tryParse(sharesController.text) ?? 0;
-                        if (currentValue > 1) {
-                          setState(() {
-                            sharesController.text =
-                                (currentValue - 1).toString();
-                          });
+                        if (databaseAPI.shares > 1) {
+                          databaseAPI.updateQty(databaseAPI.shares - 1);
                         }
                       },
                       icon: const Icon(Icons.remove),
                     ),
                     SizedBox(
-                      width: 30, // Adjusted width for the TextField
-                      height: 30, // Adjusted height for the TextField
-                      child: TextField(
-                        controller: sharesController,
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.zero,
-                          isDense: true, // Reduces the height of the TextField
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
+                      width: 30,
+                      child: Center(
+                        child: Text(
+                          databaseAPI.shares.toString(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                     IconButton(
                       onPressed: () {
-                        // Increase shares
-                        int currentValue =
-                            int.tryParse(sharesController.text) ?? 0;
-                        setState(() {
-                          sharesController.text = (currentValue + 1).toString();
-                        });
+                        if (databaseAPI.shares < 101) {
+                          databaseAPI.updateQty(databaseAPI.shares + 1);
+                        }
                       },
                       icon: const Icon(Icons.add),
                     ),
