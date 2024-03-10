@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:fanxange/pages/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,27 +26,20 @@ class _WalletPageState extends State<WalletPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Wallet Page',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [],
-            ),
             Row(
               children: [
                 _buildBalanceContainer('Total Balance', totalBalance,
-                    addButton: _buildAddButton(), color: Color(0xFF21899C)),
-                _buildBalanceContainer('Winning Balance', winningBalance,
-                    addButton: _buildAddButton(), color: Color(0xFFFE9879)),
+                    color: Colors.blueGrey),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildAddButton(),
+                SizedBox(
+                  width: 10,
+                ),
+                _buildWithdrawButton(),
               ],
             ),
             SizedBox(height: 16),
@@ -59,12 +54,15 @@ class _WalletPageState extends State<WalletPage> {
                   return Column(
                     children: [
                       ListTile(
-                        title: Text('Transaction $index'),
-                        subtitle: Text(
-                          '+\$10.00',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        subtitle: Text('Balance $index'),
                         trailing: Text(
+                          '+₹10.00',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.green),
+                        ),
+                        title: Text(
                           '2024-03-10',
                           style: TextStyle(fontSize: 16),
                         ),
@@ -81,8 +79,7 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
-  Widget _buildBalanceContainer(String title, double balance,
-      {Widget? addButton, Color? color}) {
+  Widget _buildBalanceContainer(String title, double balance, {Color? color}) {
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -93,7 +90,7 @@ class _WalletPageState extends State<WalletPage> {
         padding: EdgeInsets.all(16),
         margin: EdgeInsets.all(8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               title,
@@ -112,8 +109,6 @@ class _WalletPageState extends State<WalletPage> {
                 color: Colors.white,
               ),
             ),
-            if (addButton != null) SizedBox(height: 8),
-            if (addButton != null) addButton!,
           ],
         ),
       ),
@@ -121,15 +116,54 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Widget _buildAddButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () => _showMoneyDialog(context, MoneyAction.add),
-        style: ElevatedButton.styleFrom(
-          textStyle: TextStyle(fontSize: 16),
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: Colors.green),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              FontAwesomeIcons.plus,
+              color: Colors.white,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              'Add Funds',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-        child: Text(
-          'Add ',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildWithdrawButton() {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: Colors.blue),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              FontAwesomeIcons.moneyBills,
+              color: Colors.white,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              'Withdraw',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );
