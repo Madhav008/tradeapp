@@ -1,16 +1,22 @@
-# fanxange
+# Fanxange
 
 # Feature 
-    [] Buy/Sell the Premium
-    [] Get the Allotment notification
-    [] Get the Allotment status
-    [] Buy/Sell the HNI
-    [] Add the Clients 
-    [] Change the Rate of the Premium according to the brokrage
-    [] Most bought highlight
-    [] Get the Detail of the IPO
-
-
+    [*] Order Flow
+        [*] Order creation
+        [*] Store the order in orderbook
+    [*] Player Segregation Flow
+        [*] Get the Match Data
+        [*] Get the player info
+        [*] Get the Player points
+    [*] Order optimizations 
+        [*] Create the order under 1sec
+        [*] filled the order if buy and sell quantity is there
+        [*] disable the player if the out of stock
+    [] Logout
+    [] Wallet
+    [] Portfolio
+    [] Profile
+    
 #   Funtions
     [] Funtion to segregate between Live, Upcoming and Closed
     [] Funtion to update the price of the IPO

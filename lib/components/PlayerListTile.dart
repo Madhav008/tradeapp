@@ -1,4 +1,4 @@
-import 'package:appwrite/models.dart';
+import 'package:fanxange/Model/PlayerModel.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ class PlayerListTile extends StatelessWidget {
     required this.playersdata,
   }) : super(key: key);
 
-  final Document? playersdata;
+  final Player? playersdata;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class PlayerListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Image.network(
-                  playersdata?.data['image'] ?? '',
+                  playersdata?.image ?? '',
                   height: 60,
                   width: 60,
                 ),
@@ -44,7 +44,7 @@ class PlayerListTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        playersdata?.data['name'] ?? '',
+                        playersdata?.name ?? '',
                         style: GoogleFonts.openSans(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -52,7 +52,7 @@ class PlayerListTile extends StatelessWidget {
                         softWrap: true,
                       ),
                       Text(
-                        playersdata?.data['role'] ?? '',
+                        playersdata?.role ?? '',
                         style: GoogleFonts.openSans(
                           fontSize: 12,
                           height: 1.2,
@@ -70,7 +70,7 @@ class PlayerListTile extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            playersdata?.data['teamname'] ?? '',
+                            playersdata?.teamname ?? '',
                             style: GoogleFonts.openSans(
                               color: Colors.white,
                               fontSize: 12,
@@ -115,8 +115,10 @@ class PlayerListTile extends StatelessWidget {
                 onTap: () {
                   databaseApi.setOrderType("buy");
                   databaseApi.setPlayerPrice(
-                    (playersdata?.data['buy_rate'] ?? 0).toInt(),
-                  );
+                      int.tryParse(playersdata?.buyRate ?? '0') ?? 0);
+                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
+                  databaseApi.setTeamId(playersdata?.teamname);
                   databaseApi.setUserId(authApi.userid);
                   databaseApi.clearOrder();
                   _showPlayerDetailsModal(context, "buy");
@@ -130,7 +132,7 @@ class PlayerListTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    "Buy: ₹${playersdata?.data['buy_rate'].toString() ?? ''}",
+                    "Buy: ₹${playersdata?.buyRate.toString() ?? ''}",
                     style: GoogleFonts.openSans(
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -143,9 +145,11 @@ class PlayerListTile extends StatelessWidget {
                 onTap: () {
                   databaseApi.setOrderType("sell");
                   databaseApi.setPlayerPrice(
-                    (playersdata?.data['sell_rate'] ?? 0).toInt(),
-                  );
+                      int.tryParse(playersdata?.sellRate ?? '0') ?? 0);
                   databaseApi.setUserId(authApi.userid);
+                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
+                  databaseApi.setTeamId(playersdata?.teamname);
                   databaseApi.clearOrder();
                   _showPlayerDetailsModal(context, "sell");
                 },
@@ -161,7 +165,7 @@ class PlayerListTile extends StatelessWidget {
                             0xFF21899C)), // Optional border for visibility
                   ),
                   child: Text(
-                    "Sell: ₹${playersdata?.data['sell_rate'].toString() ?? ''}",
+                    "Sell: ₹${playersdata?.sellRate.toString() ?? ''}",
                     style: GoogleFonts.openSans(
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF21899C),
@@ -219,8 +223,7 @@ class PlayerListTile extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 40,
-                  backgroundImage:
-                      NetworkImage(playersdata?.data['image'] ?? ''),
+                  backgroundImage: NetworkImage(playersdata?.image ?? ''),
                 ),
                 const SizedBox(height: 10),
                 Container(
@@ -234,7 +237,7 @@ class PlayerListTile extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      playersdata?.data['teamname'] ?? 'Team Name',
+                      playersdata?.teamname ?? 'Team Name',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -245,7 +248,7 @@ class PlayerListTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  playersdata?.data['name'] ?? 'Player Name',
+                  playersdata?.name ?? 'Player Name',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -253,7 +256,7 @@ class PlayerListTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  playersdata?.data['role'] ?? 'Player Role',
+                  playersdata?.role ?? 'Player Role',
                   style: const TextStyle(
                     fontSize: 16,
                     fontStyle: FontStyle.italic,
@@ -263,7 +266,7 @@ class PlayerListTile extends StatelessWidget {
                 // Initial price and number of shares
                 _buildDetailColumn(
                   'Initial Price',
-                  '₹ ${type == 'sell' ? playersdata?.data['sell_rate'] : playersdata?.data['buy_rate']}',
+                  '₹ ${type == 'sell' ? playersdata?.sellRate : playersdata?.buyRate}',
                 ),
                 const ShareCounter(), // Updated to const
 

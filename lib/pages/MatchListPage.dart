@@ -39,10 +39,10 @@ class MatchListPage extends StatelessWidget {
         enabled: databaseAPI.isMatchLoading,
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: databaseAPI.notStartedMatches?.documents.length ?? 0,
+          itemCount: databaseAPI.notStartedMatches?.matches.length ?? 0,
           itemBuilder: (context, index) {
-            var ipodata = databaseAPI.notStartedMatches?.documents[index];
-            return MatchListTile(ipodata: ipodata);
+            var matchdata = databaseAPI.notStartedMatches?.matches[index];
+            return MatchListTile(matchdata: matchdata);
           },
         ),
       ),
@@ -60,10 +60,10 @@ class MatchListPage extends StatelessWidget {
         enabled: databaseAPI.isMatchLoading,
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: databaseAPI.startedMatches?.documents.length ?? 0,
+            itemCount: databaseAPI.startedMatches?.matches.length ?? 0,
             itemBuilder: (context, index) {
-              var ipodata = databaseAPI.startedMatches?.documents[index];
-              return MatchListTile(ipodata: ipodata);
+              var ipodata = databaseAPI.startedMatches?.matches[index];
+              return MatchListTile(matchdata: ipodata);
             }),
       ),
     );
@@ -80,10 +80,10 @@ class MatchListPage extends StatelessWidget {
         enabled: databaseAPI.isMatchLoading,
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: databaseAPI.completedMatches?.documents.length ?? 0,
+            itemCount: databaseAPI.completedMatches?.matches.length ?? 0,
             itemBuilder: (context, index) {
-              var ipodata = databaseAPI.completedMatches?.documents[index];
-              return MatchListTile(ipodata: ipodata);
+              var ipodata = databaseAPI.completedMatches?.matches[index];
+              return MatchListTile(matchdata: ipodata);
             }),
       ),
     );
@@ -116,7 +116,7 @@ class MatchListPage extends StatelessWidget {
             ),
             Text.rich(
               TextSpan(
-                children: [
+                children: const [
                   TextSpan(
                     text: 'Fan',
                   ),
@@ -138,7 +138,7 @@ class MatchListPage extends StatelessWidget {
           ],
         ),
       ),
-      bottom: TabBar(
+      bottom: const TabBar(
         tabs: [
           Tab(text: 'Upcoming'),
           Tab(text: 'Live'),

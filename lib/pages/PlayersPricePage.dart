@@ -45,9 +45,9 @@ class PlayerPrice extends StatelessWidget {
             crossAxisCount: 2,
           ),
           // shrinkWrap: true,
-          itemCount: databaseAPI.playersdata?.documents.length,
+          itemCount: databaseAPI.playersdata?.length,
           itemBuilder: (context, index) {
-            var ipodata = databaseAPI.playersdata?.documents[index];
+            var ipodata = databaseAPI.playersdata?[index];
             return PlayerListTile(playersdata: ipodata);
           },
         ),
@@ -108,8 +108,8 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
       bottom: TabBar(
         tabs: [
           const Tab(text: 'All'),
-          Tab(text: ipodata['team1display']),
-          Tab(text: ipodata['team2display']),
+          Tab(text: ipodata.team1Display),
+          Tab(text: ipodata.team2Display),
         ],
       ),
       flexibleSpace: Column(
@@ -151,7 +151,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Image.network(
-                      ipodata['team1logo'] ?? '',
+                      ipodata.team1Logo ?? '',
                       height: 60,
                       width: 60,
                     ),
@@ -164,7 +164,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                (ipodata['team1display']),
+                                (ipodata.team1Display),
                                 style: GoogleFonts.inter(
                                     fontSize: 15,
                                     color: Colors.grey[700],
@@ -178,7 +178,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                                 ),
                               ),
                               Text(
-                                (ipodata['team2display']),
+                                (ipodata.team2Display),
                                 style: GoogleFonts.inter(
                                     fontSize: 15,
                                     color: Colors.grey[700],
@@ -196,10 +196,11 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                               color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: ipodata['status'] == "notstarted"
+                            child: ipodata.status == "notstarted"
                                 ? CountdownTimer(
-                                    endTime: DateTime.parse(
-                                            ipodata['start_date'] ?? '')
+                                    endTime: DateTime.parse(ipodata.startDate
+                                                .toIso8601String() ??
+                                            '')
                                         .millisecondsSinceEpoch,
                                     textStyle: const TextStyle(
                                         fontSize: 14,
@@ -207,7 +208,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                                         fontWeight: FontWeight.bold),
                                   )
                                 : Text(
-                                    ipodata['status'] == "completed"
+                                    ipodata.status == "completed"
                                         ? "Completed"
                                         : "Pending",
                                     style: const TextStyle(
@@ -220,7 +221,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Image.network(
-                      ipodata['team2logo'] ?? '',
+                      ipodata.team2Logo ?? '',
                       height: 60,
                       width: 60,
                     ),

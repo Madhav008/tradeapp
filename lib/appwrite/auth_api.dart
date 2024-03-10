@@ -1,7 +1,9 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/constants/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:fanxange/Model/UsersModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AuthStatus {
   uninitialized,
@@ -10,98 +12,107 @@ enum AuthStatus {
 }
 
 class AuthAPI extends ChangeNotifier {
-  Client client = Client();
-  late final Account account;
-
-  late User _currentUser;
-
+  final Dio _dio = Dio();
   AuthStatus _status = AuthStatus.uninitialized;
+  User? _currentUser;
+  late SharedPreferences _prefs;
 
-  // Getter methods
-  User get currentUser => _currentUser;
   AuthStatus get status => _status;
-  String? get username => _currentUser.name;
-  String? get email => _currentUser.email;
-  String? get userid => _currentUser.$id;
+  User get currentUser => _currentUser!;
+  String? get username => _currentUser?.user.displayName;
+  String? get email => _currentUser?.user.email;
+  String? get userid => _currentUser?.user.id;
 
-  // Constructor
   AuthAPI() {
     init();
-    loadUser();
   }
 
-  // Initialize the Appwrite client
-  init() {
-    client
-        .setEndpoint(APPWRITE_URL)
-        .setProject(APPWRITE_PROJECT_ID)
-        .setSelfSigned();
-    account = Account(client);
+  init() async {
+    _prefs = await SharedPreferences.getInstance();
+    loadUser();
   }
 
   loadUser() async {
     try {
-      final user = await account.get();
-      _status = AuthStatus.authenticated;
+      final token = _prefs.getString('token');
+
+      if (token != null) {
+        final response = await _dio.get(
+          USER_PROFILE_ENDPOINT,
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          }),
+        );
+        _currentUser = User.fromJson(response.data);
+
+        await DatabaseAPI().getWallet(_currentUser?.user?.id);
+        _status = AuthStatus.authenticated;
+        notifyListeners();
+      } else {
+        _status = AuthStatus.unauthenticated;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error in loadUser: $e"); // Add this line
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<User> createUser({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    try {
+      final response = await _dio.post(
+        REGISTER_ENDPOINT,
+        data: {
+          'email': email,
+          'password': password,
+          'username': name,
+        },
+      );
+      final user = User.fromJson(response.data);
+      print(response.data);
       _currentUser = user;
+      _status = AuthStatus.authenticated;
+      notifyListeners();
+
+      // Save token to SharedPreferences
+      await _prefs.setString('token', user.token);
+
+      return user;
     } catch (e) {
       _status = AuthStatus.unauthenticated;
+      rethrow;
     } finally {
       notifyListeners();
     }
   }
 
-  Future<User> createUser(
-      {required String email,
-      required String password,
-      required String name}) async {
+  Future<void> login({required String email, required String password}) async {
     try {
-      final user = await account.create(
-          userId: ID.unique(), email: email, password: password, name: name);
-      return user;
-    } finally {
-      notifyListeners();
-    }
-  }
-
-  Future<Session> createEmailSession(
-      {required String email, required String password}) async {
-    try {
-      final session =
-          await account.createEmailSession(email: email, password: password);
-      _currentUser = await account.get();
+      final response = await _dio.post(
+        LOGIN_ENDPOINT,
+        data: {
+          'email': email,
+          'password': password,
+        },
+      );
+      final user = User.fromJson(response.data);
+      _currentUser = user;
       _status = AuthStatus.authenticated;
-      return session;
-    } finally {
+      await _prefs.setString('token', user.token);
       notifyListeners();
-    }
-  }
-
-  signInWithProvider({required String provider}) async {
-    try {
-      final session = await account.createOAuth2Session(provider: provider);
-      _currentUser = await account.get();
-      _status = AuthStatus.authenticated;
-      return session;
-    } finally {
-      notifyListeners();
-    }
-  }
-
-  signOut() async {
-    try {
-      await account.deleteSession(sessionId: 'current');
+    } catch (e) {
       _status = AuthStatus.unauthenticated;
+      rethrow;
     } finally {
       notifyListeners();
     }
-  }
-
-  Future<Preferences> getUserPreferences() async {
-    return await account.getPrefs();
-  }
-
-  updatePreferences({required String bio}) async {
-    return account.updatePrefs(prefs: {'bio': bio});
   }
 }

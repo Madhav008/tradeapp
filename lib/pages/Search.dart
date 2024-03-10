@@ -1,4 +1,4 @@
-import 'package:appwrite/models.dart';
+import 'package:fanxange/Model/MatchesModel.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 class MatchListTile extends StatelessWidget {
   const MatchListTile({
     super.key,
-    required this.ipodata,
+    required this.matchdata,
   });
 
-  final Document? ipodata;
+  final MatchElement? matchdata;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MatchListTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          databaseAPI.setMatchData(ipodata?.data);
+          databaseAPI.setMatchData(matchdata);
           Navigator.pushNamed(context, PlayerPrice.routeName);
         },
         child: Container(
@@ -36,7 +36,7 @@ class MatchListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Image.network(
-                  ipodata?.data['team1logo'] ?? '',
+                  matchdata?.team1Logo ?? '',
                   height: 60,
                   width: 60,
                 ),
@@ -46,7 +46,7 @@ class MatchListTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        (ipodata?.data['seriesname']),
+                        (matchdata!.seriesname),
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           color: Colors.grey[700],
@@ -56,7 +56,7 @@ class MatchListTile extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            (ipodata?.data['team1display']),
+                            (matchdata!.team1Display),
                             style: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: Colors.grey[700],
@@ -70,7 +70,7 @@ class MatchListTile extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            (ipodata?.data['team2display']),
+                            (matchdata!.team2Display),
                             style: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: Colors.grey[700],
@@ -78,31 +78,31 @@ class MatchListTile extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //Design a container in which timer is going hh:mm:ss
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: ipodata?.data['status'] == "notstarted"
+                        child: matchdata?.status == "notstarted"
                             ? CountdownTimer(
                                 endTime: DateTime.parse(
-                                        ipodata?.data?['start_date'] ?? '')
+                                        matchdata!.startDate.toString() ?? '')
                                     .millisecondsSinceEpoch,
-                                textStyle: TextStyle(
+                                textStyle: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
                               )
                             : Text(
-                                ipodata?.data['status'] == "completed"
+                                matchdata?.status == "completed"
                                     ? "Completed"
                                     : "Pending",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
@@ -112,7 +112,7 @@ class MatchListTile extends StatelessWidget {
                   ),
                 ),
                 Image.network(
-                  ipodata?.data['team2logo'] ?? '',
+                  matchdata?.team2Logo ?? '',
                   height: 60,
                   width: 60,
                 ),

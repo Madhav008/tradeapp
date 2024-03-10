@@ -1,4 +1,3 @@
-
 import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';

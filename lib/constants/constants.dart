@@ -1,20 +1,25 @@
-// ignore: duplicate_ignore
-// ignore: constant_identifier_names
-// ignore_for_file: constant_identifier_names, duplicate_ignore
+// ignore_for_file: constant_identifier_names
 
-const String APPWRITE_PROJECT_ID = "65b1249d13bbc73d76c9";
-// ignore: constant_identifier_names
-const String APPWRITE_URL = "https://appwrite.fanxange.live/v1";
-// const String APPWRITE_URL = "http://192.168.1.123:4999/v1";
+const String API_URL = "https://api.fanxange.live";
+// const String API_URL = "http://192.168.1.66:3132";
 
-// ignore: constant_identifier_names
-const String APPWRITE_DATABASE_ID = "ipopremium";
-const String COLLECTION_transactions = "transactions";
-const String COLLECTION_orders = "orders";
-const String COLLECTION_wallet = "wallet";
-const String COLLECTION_Maches = "matches";
-const String COLLECTION_Players = "Players";
-const String COLLECTION_Fees = "fees";
+const String USER_PROFILE_ENDPOINT = '$API_URL/auth/user';
+const String REGISTER_ENDPOINT = '$API_URL/auth/register';
+const String LOGIN_ENDPOINT = '$API_URL/auth/login';
+const String MATCH_UPCOMING = '$API_URL/match/upcomming';
+const String MATCH_LIVE = '$API_URL/match/live';
+const String MATCH_RESULT = '$API_URL/match/result';
+const String PLAYER_ENDPOINT = '$API_URL/player';
+const String FEES_ENDPOINT = '$API_URL/fees';
+const String CREATE_WALLET_ENDPOINT = '$API_URL/wallet/createwallet';
+const String GET_WALLET_ENDPOINT = '$API_URL/wallet/getbalance';
+const String CREATE_ORDER_ENDPOINT = '$API_URL/order/create';
+
+
+
+
+
+
 
 
 // const int primaryColor = "0xFFE5F64A";

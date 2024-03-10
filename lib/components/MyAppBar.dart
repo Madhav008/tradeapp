@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart'; // Changed the import statement
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fanxange/pages/Notification.dart';
-import 'package:fanxange/pages/Search.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   bool isActions; // Removed the default value
@@ -23,6 +22,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       actions: isActions
           ? [
+            
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.bell,
@@ -46,7 +46,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Text.rich(
             TextSpan(
-              children: [
+              children: const [
                 TextSpan(
                   text: 'Fan',
                 ),
