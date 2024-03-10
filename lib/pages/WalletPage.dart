@@ -117,26 +117,31 @@ class _WalletPageState extends State<WalletPage> {
 
   Widget _buildAddButton() {
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: Colors.green),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              FontAwesomeIcons.plus,
-              color: Colors.white,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              'Add Funds',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ],
+      child: GestureDetector(
+        onTap: () {
+          _showMoneyDialog(context, MoneyAction.add);
+        },
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), color: Colors.green),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                FontAwesomeIcons.plus,
+                color: Colors.white,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'Add Funds',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -144,26 +149,31 @@ class _WalletPageState extends State<WalletPage> {
 
   Widget _buildWithdrawButton() {
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: Colors.blue),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              FontAwesomeIcons.moneyBills,
-              color: Colors.white,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              'Withdraw',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ],
+      child: GestureDetector(
+        onTap: () {
+          _showMoneyDialog(context, MoneyAction.withdraw);
+        },
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), color: Colors.blue),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                FontAwesomeIcons.moneyBills,
+                color: Colors.white,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'Withdraw',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );
