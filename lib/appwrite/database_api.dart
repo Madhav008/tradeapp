@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fanxange/Model/UserOrderModel.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
@@ -41,10 +42,13 @@ class DatabaseAPI with ChangeNotifier {
 
   // Loading state
   bool _isMatchLoading = true;
-  bool _isPlayerLoading = true;
-
   bool get isMatchLoading => _isMatchLoading;
+
+  bool _isPlayerLoading = true;
   bool get isPlayerLoading => _isPlayerLoading;
+
+  bool _isPortfolio = false;
+  bool get isPortfolio => _isPortfolio;
 
   int _platformFees = 0;
   int get platformFees => _platformFees;
@@ -61,8 +65,8 @@ class DatabaseAPI with ChangeNotifier {
   late double _totalAmount;
   double get totalAmount => _totalAmount;
 
-  late int _playerPrice;
-  int get playerPrice => _playerPrice;
+  late double _playerPrice;
+  double get playerPrice => _playerPrice;
 
   String? _userid;
   String? get userid => _userid;
@@ -78,6 +82,21 @@ class DatabaseAPI with ChangeNotifier {
 
   late String _orderType;
   String get orderType => _orderType;
+
+  bool _isUserOrderLoading = true;
+  bool get isUserOrderLoading => _isUserOrderLoading;
+
+  List<MatchElement> _userMatches = [];
+  List<MatchElement>? get userMatches => _userMatches;
+
+  List<MatchElement> _userCompletedMatches = [];
+  List<MatchElement>? get userCompletedMatches => _userCompletedMatches;
+
+  List<Player> _userPlayers = [];
+  List<Player>? get userPlayers => _userPlayers;
+
+  List<Order> _userOrdersList = [];
+  List<Order>? get userOrdersList => _userOrdersList;
 
   final Dio dio = Dio();
 
@@ -157,19 +176,26 @@ class DatabaseAPI with ChangeNotifier {
     try {
       _isPlayerLoading = true;
       notifyListeners();
-
-      Response<dynamic> playersResponse =
-          await dio.post(PLAYER_ENDPOINT, // Replace with your API endpoint
-              options: Options(headers: {
-                'Content-Type': 'application/json',
-                // 'Authorization': 'Bearer ${authApi.currentUser.token}',
-              }),
-              data: {
-            "matchkey": matchdata.matchkey,
-          });
-      List<Player> playersList =
-          playerFromJson(jsonEncode(playersResponse.data));
-      _playersdata = playersList;
+      print(_isPortfolio);
+      if (_isPortfolio == false) {
+        Response<dynamic> playersResponse =
+            await dio.post(PLAYER_ENDPOINT, // Replace with your API endpoint
+                options: Options(headers: {
+                  'Content-Type': 'application/json',
+                  // 'Authorization': 'Bearer ${authApi.currentUser.token}',
+                }),
+                data: {
+              "matchkey": matchdata.matchkey,
+            });
+        List<Player> playersList =
+            playerFromJson(jsonEncode(playersResponse.data));
+        _playersdata = playersList;
+      } else {
+        _playersdata = _userPlayers
+            .where((e) => e.matchkey == matchdata.matchkey)
+            .toList();
+        notifyListeners();
+      }
     } catch (e) {
       print("Error fetching players data: $e");
       Fluttertoast.showToast(
@@ -202,9 +228,6 @@ class DatabaseAPI with ChangeNotifier {
       _teamBPlayers =
           players.where((player) => player.team == 'team2').toList();
 
-      print('Team A Players: $_teamAPlayers');
-      print('Team B Players: $_teamBPlayers');
-
       notifyListeners();
     }
   }
@@ -222,7 +245,7 @@ class DatabaseAPI with ChangeNotifier {
       final response = await Dio().get(FEES_ENDPOINT);
       if (response.statusCode == 200) {
         _platformFees = response.data['fees'];
-        print(_platformFees);
+        // print(_platformFees);
       } else {
         print(
             'Failed to fetch platform fees. Status code: ${response.statusCode}');
@@ -241,18 +264,7 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
-
-
-  getWallet(String? userid) async {
-    final wallet = await Dio().get(GET_WALLET_ENDPOINT + '/${userid}');
-    try {
-      print(wallet.data);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  setPlayerPrice(int price) {
+  setPlayerPrice(double price) {
     _playerPrice = price;
     notifyListeners();
   }
@@ -286,8 +298,6 @@ class DatabaseAPI with ChangeNotifier {
     _fees = double.parse(myplatformFees.toStringAsFixed(2));
     _totalAmount = double.parse(mytotalAmount.toStringAsFixed(2));
 
-    print("fees " + _fees.toString());
-
     notifyListeners();
   }
 
@@ -316,10 +326,11 @@ class DatabaseAPI with ChangeNotifier {
           player_price: _playerPrice,
           order_type: orderType,
           shares: _shares,
+          timestamp: DateTime.now().toString(),
           total_amount: _totalAmount,
           userid: userid,
           platformFees: _fees,
-          matchid: _matchid,
+          matchid: matchdata.matchkey,
           playerid: _playerid,
           teamid: _teamid,
           walletId: userid);
@@ -347,6 +358,7 @@ class DatabaseAPI with ChangeNotifier {
         textColor: Colors.white,
       );
     }
+    await getUserOrder();
   }
 
   createOrderHelper(Order order) async {
@@ -357,12 +369,77 @@ class DatabaseAPI with ChangeNotifier {
       print(e);
     }
   }
+
+  getUserOrder() async {
+    try {
+      _isUserOrderLoading = true;
+      notifyListeners();
+      final response =
+          await Dio().get('$GETUSERR_ORDER_ENDPOINT/${authApi?.userid}');
+      print('$GETUSERR_ORDER_ENDPOINT/${authApi?.userid}');
+      if (response.data is List) {
+        List<dynamic> userOrders = response.data;
+        List<MatchElement> luserMatches = [];
+        List<Player> luserPlayers = [];
+        List<Order> luserOrdersList = [];
+
+        for (var userOrder in userOrders) {
+          if (userOrder['match'] != null && userOrder['players'] != null) {
+            var userOrderInstance = UserOrder.fromJson(userOrder);
+
+            // Add user match to the array
+            luserMatches.add(userOrderInstance.match);
+
+            for (var playerOrder in userOrderInstance.playerOrders) {
+              // Add user player to the array
+              luserPlayers.add(playerOrder.player);
+
+              for (var order in playerOrder.orders) {
+                // Add user order to the array
+                luserOrdersList.add(order);
+
+                // Add your logic to process the order information here
+              }
+            }
+          }
+        }
+
+        _userMatches =
+            luserMatches.where((e) => e.status == 'notstarted').toList();
+        _userCompletedMatches =
+            luserMatches.where((e) => e.status != 'notstarted').toList();
+        _userPlayers = luserPlayers;
+        _userOrdersList = luserOrdersList;
+
+        print("User Matches: $userMatches");
+        print("User Players: $userPlayers");
+        print("User Orders: $userOrdersList");
+
+        _isUserOrderLoading = false;
+        notifyListeners();
+      } else {
+        print("Error: Unexpected response format");
+      }
+    } catch (e) {
+      print("Unexpected Error: $e");
+    } finally {
+      _isUserOrderLoading = false;
+      notifyListeners();
+    }
+  }
+
+  setIsPortfolio(bool portfolio) {
+    _isPortfolio = portfolio;
+    print(portfolio);
+    notifyListeners();
+  }
 }
 
 class Order {
-  final int player_price;
+  final double player_price;
   final String order_type;
   final int shares;
+  final String timestamp;
   final double total_amount;
   final String? userid;
   final double platformFees;
@@ -376,6 +453,7 @@ class Order {
       {required this.player_price,
       required this.order_type,
       required this.shares,
+      required this.timestamp,
       required this.total_amount,
       required this.userid,
       required this.platformFees,
@@ -387,16 +465,18 @@ class Order {
   // Factory constructor to create an Order instance from a Map
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-        player_price: json['player_price'],
-        order_type: json['order_type'],
-        shares: json['shares'],
-        total_amount: json['total_amount'],
-        userid: json['userid'],
-        platformFees: json['platformFees'],
-        playerid: json['playerid'],
-        matchid: json['matchid'],
-        teamid: json['teamid'],
-        walletId: json['walletId']);
+      player_price: (json['price'] as num).toDouble(), // Convert to double
+      total_amount: (json['amount'] as num).toDouble(), // Convert to double
+      shares: json['qty'] ?? 0,
+      userid: json['user'] ?? '',
+      order_type: json['orderType'] ?? '',
+      playerid: json['playerId'] ?? '',
+      matchid: json['matchId'] ?? '',
+      teamid: json['teamId'] ?? '',
+      timestamp: json['timestamp'] ?? '',
+      platformFees: 0.00,
+      walletId: '',
+    );
   }
 
   // toJson method to convert the object to a Map
@@ -405,12 +485,13 @@ class Order {
       'price': player_price,
       'orderType': order_type,
       'qty': shares,
+      'timestamp': timestamp,
       'amount': total_amount,
       'user': userid,
       'platformFees': platformFees,
       'playerId': playerid,
-      'matchid': matchid,
-      'teamid': teamid,
+      'matchId': matchid,
+      'teamId': teamid,
       'walletId': walletId
     };
   }

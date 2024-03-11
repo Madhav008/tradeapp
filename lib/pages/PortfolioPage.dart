@@ -10,24 +10,31 @@ import 'package:fanxange/components/MatchListTile.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class MatchListPage extends StatelessWidget {
-  const MatchListPage({Key? key});
+class PortfolioPage extends StatefulWidget {
+  PortfolioPage({Key? key});
+
+  @override
+  State<PortfolioPage> createState() => _PortfolioPageState();
+}
+
+class _PortfolioPageState extends State<PortfolioPage> {
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
-    // databaseAPI.seprateMatchList();
-
     return DefaultTabController(
-      length: 3, // Number of tabs
+      length: 2, // Number of tabs
       child: Scaffold(
         appBar: _appBar(context),
-        body: TabBarView(
-          children: [
-            _upcomingMatchList(databaseAPI),
-            _openMatchList(databaseAPI),
-            _closedMatchList(databaseAPI), // Adjust as needed
-          ],
-        ),
+        body: databaseAPI.isUserOrderLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : TabBarView(
+                children: [
+                  _upcomingMatchList(databaseAPI),
+                  _completedMatchList(databaseAPI),
+                ],
+              ),
       ),
     );
   }
@@ -35,19 +42,20 @@ class MatchListPage extends StatelessWidget {
   Widget _upcomingMatchList(DatabaseAPI databaseAPI) {
     return RefreshIndicator(
       onRefresh: () async {
-        databaseAPI.seprateMatchList();
+        // Add logic to fetch updated data
+        databaseAPI.getUserOrder();
       },
       child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,
-        child: databaseAPI.notStartedMatches?.matches.length == 0
+        child: databaseAPI.userMatches?.length == 0
             ? Center(
-                child: Text("No Upcoming Matches"),
+                child: Text("No Orders Present"),
               )
             : ListView.builder(
                 shrinkWrap: true,
-                itemCount: databaseAPI.notStartedMatches?.matches.length ?? 0,
+                itemCount: databaseAPI.userMatches?.length ?? 0,
                 itemBuilder: (context, index) {
-                  var matchdata = databaseAPI.notStartedMatches?.matches[index];
+                  var matchdata = databaseAPI.userMatches?[index];
                   return MatchListTile(matchdata: matchdata);
                 },
               ),
@@ -55,50 +63,26 @@ class MatchListPage extends StatelessWidget {
     );
   }
 
-  RefreshIndicator _openMatchList(DatabaseAPI databaseAPI) {
+  Widget _completedMatchList(DatabaseAPI databaseAPI) {
     return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(Duration(seconds: 1), () {
-          databaseAPI.seprateMatchList();
-        });
+      onRefresh: () async {
+        // Add logic to fetch updated data
+        databaseAPI.getUserOrder();
       },
       child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,
-        child: databaseAPI.startedMatches?.matches.length == 0
+        child: databaseAPI.userCompletedMatches?.length == 0
             ? Center(
-                child: Text("No Live Matches"),
+                child: Text("No Completed Orders Present"),
               )
             : ListView.builder(
                 shrinkWrap: true,
-                itemCount: databaseAPI.startedMatches?.matches.length ?? 0,
+                itemCount: databaseAPI.userCompletedMatches?.length ?? 0,
                 itemBuilder: (context, index) {
-                  var ipodata = databaseAPI.startedMatches?.matches[index];
-                  return MatchListTile(matchdata: ipodata);
-                }),
-      ),
-    );
-  }
-
-  RefreshIndicator _closedMatchList(DatabaseAPI databaseAPI) {
-    return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(Duration(seconds: 1), () {
-          databaseAPI.seprateMatchList();
-        });
-      },
-      child: Skeletonizer(
-        enabled: databaseAPI.isMatchLoading,
-        child: databaseAPI.completedMatches?.matches.length == 0
-            ? Center(
-                child: Text("No Completed Matches"),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: databaseAPI.completedMatches?.matches.length ?? 0,
-                itemBuilder: (context, index) {
-                  var ipodata = databaseAPI.completedMatches?.matches[index];
-                  return MatchListTile(matchdata: ipodata);
-                }),
+                  var matchdata = databaseAPI.userCompletedMatches?[index];
+                  return MatchListTile(matchdata: matchdata);
+                },
+              ),
       ),
     );
   }
@@ -115,11 +99,12 @@ class MatchListPage extends StatelessWidget {
               Navigator.pushNamed(context, NotificationPage.routeName),
         ),
         IconButton(
-            icon: Icon(
-              FontAwesomeIcons.signOut,
-              color: Colors.grey[600],
-            ),
-            onPressed: () => context.read<AuthAPI>().logout())
+          icon: Icon(
+            FontAwesomeIcons.signOut,
+            color: Colors.grey[600],
+          ),
+          onPressed: () => context.read<AuthAPI>().logout(),
+        ),
       ],
       title: Padding(
         padding: const EdgeInsets.only(left: 80.0),
@@ -158,11 +143,11 @@ class MatchListPage extends StatelessWidget {
           ],
         ),
       ),
+      // Add the headline "Portfolio" to the AppBar
       bottom: const TabBar(
         tabs: [
-          Tab(text: 'Upcoming'),
-          Tab(text: 'Live'),
-          Tab(text: 'Results'),
+          Tab(text: 'Current Holding'),
+          Tab(text: 'Previous Holding'),
         ],
       ),
     );

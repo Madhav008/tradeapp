@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fanxange/appwrite/database_api.dart';
+import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/Model/UsersModel.dart';
@@ -45,8 +48,9 @@ class AuthAPI extends ChangeNotifier {
           }),
         );
         _currentUser = User.fromJson(response.data);
+        await WalletProvider().getWallet(_currentUser?.user?.id);
+        await _prefs.setString('userid', _currentUser!.user.id);
 
-        await DatabaseAPI().getWallet(_currentUser?.user?.id);
         _status = AuthStatus.authenticated;
         notifyListeners();
       } else {
@@ -62,7 +66,7 @@ class AuthAPI extends ChangeNotifier {
     }
   }
 
-  Future<User> createUser({
+  createUser({
     required String email,
     required String password,
     required String name,
@@ -84,8 +88,6 @@ class AuthAPI extends ChangeNotifier {
 
       // Save token to SharedPreferences
       await _prefs.setString('token', user.token);
-
-      return user;
     } catch (e) {
       _status = AuthStatus.unauthenticated;
       rethrow;
@@ -107,6 +109,20 @@ class AuthAPI extends ChangeNotifier {
       _currentUser = user;
       _status = AuthStatus.authenticated;
       await _prefs.setString('token', user.token);
+      notifyListeners();
+    } catch (e) {
+      _status = AuthStatus.unauthenticated;
+      print(e);
+      rethrow;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _prefs.remove('token');
+      _status = AuthStatus.unauthenticated;
       notifyListeners();
     } catch (e) {
       _status = AuthStatus.unauthenticated;

@@ -1,24 +1,37 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:fanxange/appwrite/auth_api.dart';
+import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/pages/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:intl/intl.dart';
 
 class WalletPage extends StatefulWidget {
+  static String routeName = "/wallet";
+
   @override
   _WalletPageState createState() => _WalletPageState();
 }
 
 class _WalletPageState extends State<WalletPage> {
-  // Mock data for balances
-  final double totalBalance = 1000.00;
-  final double utilizedBalance = 500.00;
-  final double winningBalance = 300.00;
+  @override
+  void initState() {
+    context.read<WalletProvider>().getWallet(context.read<AuthAPI>().userid);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Mock data for balances
+    final walletApi = context.watch<WalletProvider>();
+
+    final double totalBalance = walletApi.balance;
+
     return Scaffold(
       appBar: _appBar(context),
       body: Padding(
@@ -29,7 +42,7 @@ class _WalletPageState extends State<WalletPage> {
             Row(
               children: [
                 _buildBalanceContainer('Total Balance', totalBalance,
-                    color: Colors.blueGrey),
+                    color: Color.fromARGB(207, 254, 152, 121)),
               ],
             ),
             Row(
@@ -48,29 +61,67 @@ class _WalletPageState extends State<WalletPage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        subtitle: Text('Balance $index'),
-                        trailing: Text(
-                          '+₹10.00',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.green),
+              child: Skeletonizer(
+                enabled: walletApi.isTransactionLoading,
+                child: ListView.builder(
+                  itemCount: walletApi.transactions.length,
+                  reverse: true,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    DateTime dateTime =
+                        DateTime.parse(walletApi.transactions[index].date);
+                    String formattedDate =
+                        DateFormat('dd MMM,yyyy hh:mm').format(dateTime);
+
+                    return Column(
+                      children: [
+                        ListTile(
+                          subtitle: Text(
+                              'Id: ${walletApi.transactions[index].transactionId}'),
+                          trailing: RichText(
+                            text: TextSpan(
+                              text:
+                                  walletApi.transactions[index].type == 'debit'
+                                      ? '-₹'
+                                      : '+₹',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: walletApi.transactions[index].type ==
+                                        'debit'
+                                    ? Colors
+                                        .blue // Set the color for debit transactions
+                                    : Colors
+                                        .green, // Set the color for other transactions
+                              ),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      '${walletApi.transactions[index].amount}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: walletApi.transactions[index].type ==
+                                            'debit'
+                                        ? Colors
+                                            .blue // Set the color for debit transactions
+                                        : Colors
+                                            .green, // Set the color for other transactions
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          title: Text(
+                            '${formattedDate}',
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        title: Text(
-                          '2024-03-10',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Divider(),
-                    ],
-                  );
-                },
+                        Divider(),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -88,7 +139,7 @@ class _WalletPageState extends State<WalletPage> {
           borderRadius: BorderRadius.circular(10),
         ),
         padding: EdgeInsets.all(16),
-        margin: EdgeInsets.all(8),
+        margin: EdgeInsets.only(top: 8, bottom: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -180,33 +231,87 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   void _showMoneyDialog(BuildContext context, MoneyAction action) {
+    TextEditingController amountController = new TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title:
-              Text(action == MoneyAction.add ? 'Add Money' : 'Withdraw Money'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Amount'),
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            final walletApi = context.watch<WalletProvider>();
+            final isLoading = walletApi.walletLoading;
+            if (isLoading) {
+              return const Dialog(
+                backgroundColor: Colors.transparent,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircularProgressIndicator(),
+                    ]),
+              );
+            }
+            return AlertDialog(
+              title: Text(
+                  action == MoneyAction.add ? 'Add Money' : 'Withdraw Money'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    controller: amountController,
+                    decoration: InputDecoration(labelText: 'Amount'),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(context)
+                          .pop(); // Close the dialog before showing loading
+
+                      // _loading(context); // Show loading indicator
+
+                      try {
+                        if (action == MoneyAction.add) {
+                          await context
+                              .read<WalletProvider>()
+                              .addMoney(double.parse(amountController.text));
+                        } else {
+                          await context.read<WalletProvider>().withdrawMoney(
+                              double.parse(amountController.text));
+                        }
+                        // Handle add/withdraw money logic here
+                      } catch (e) {
+                        print('Error: $e');
+                      } finally {
+                        Navigator.of(context)
+                            .pop(); // Close the loading indicator
+                      }
+                    },
+                    child: Text(action == MoneyAction.add ? 'Add' : 'Withdraw'),
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle add/withdraw money logic here
-                  Navigator.of(context).pop();
-                },
-                child: Text(action == MoneyAction.add ? 'Add' : 'Withdraw'),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
+
+  // void _loading(BuildContext ctx) {
+  //   showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (BuildContext context) {
+  //         return const Dialog(
+  //           backgroundColor: Colors.transparent,
+  //           child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: [
+  //                 CircularProgressIndicator(),
+  //               ]),
+  //         );
+  //       });
+  // }
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -218,7 +323,14 @@ class _WalletPageState extends State<WalletPage> {
           ),
           onPressed: () =>
               Navigator.pushNamed(context, NotificationPage.routeName),
-        )
+        ),
+        IconButton(
+          icon: Icon(
+            FontAwesomeIcons.signOut,
+            color: Colors.grey[600],
+          ),
+          onPressed: () => context.read<AuthAPI>().logout(),
+        ),
       ],
       title: Padding(
         padding: const EdgeInsets.only(left: 80.0),

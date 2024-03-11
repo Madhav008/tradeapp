@@ -1,7 +1,10 @@
 import 'package:fanxange/Model/PlayerModel.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/appwrite/database_api.dart';
+import 'package:fanxange/appwrite/wallet_provider.dart';
+import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +20,16 @@ class PlayerListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final authApi = context.read<AuthAPI>();
     final databaseApi = context.read<DatabaseAPI>();
-
+    final walletApi = context.watch<WalletProvider>();
+    walletApi.getWallet(authApi.userid);
     return Card(
+      elevation: 1,
       color: Colors.white,
-      elevation: 2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(5.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -87,41 +91,53 @@ class PlayerListTile extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                "Bought 0",
-                style: GoogleFonts.openSans(
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFFE9879),
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                "Sold 0",
-                style: GoogleFonts.openSans(
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF21899C),
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+          //     Text(
+          //       "Bought 0",
+          //       style: GoogleFonts.openSans(
+          //         fontWeight: FontWeight.bold,
+          //         color: const Color(0xFFFE9879),
+          //         fontSize: 14,
+          //       ),
+          //     ),
+          //     Text(
+          //       "Sold 0",
+          //       style: GoogleFonts.openSans(
+          //         fontWeight: FontWeight.bold,
+          //         color: const Color(0xFF21899C),
+          //         fontSize: 14,
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               InkWell(
                 onTap: () {
-                  databaseApi.setOrderType("buy");
-                  databaseApi.setPlayerPrice(
-                      int.tryParse(playersdata?.buyRate ?? '0') ?? 0);
-                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
-                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
-                  databaseApi.setTeamId(playersdata?.teamname);
-                  databaseApi.setUserId(authApi.userid);
-                  databaseApi.clearOrder();
-                  _showPlayerDetailsModal(context, "buy");
+                  final rate = int.parse(playersdata!.buyRate);
+                  if (walletApi.balance < rate) {
+                    Fluttertoast.showToast(
+                      msg: "Wallet Balance is low, Please Add Money.",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                    );
+                    Navigator.pushNamed(context, WalletPage.routeName);
+                  } else {
+                    databaseApi.setOrderType("buy");
+                    databaseApi.setPlayerPrice(
+                        double.tryParse(playersdata?.buyRate ?? '0') ?? 0);
+                    databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                    databaseApi.setPlayerId(playersdata?.playerkey.toString());
+                    databaseApi.setTeamId(playersdata?.teamname);
+                    databaseApi.setUserId(authApi.userid);
+                    databaseApi.clearOrder();
+                    _showPlayerDetailsModal(context, "buy");
+                  }
                 },
                 child: Container(
                   padding:
@@ -143,15 +159,27 @@ class PlayerListTile extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  databaseApi.setOrderType("sell");
-                  databaseApi.setPlayerPrice(
-                      int.tryParse(playersdata?.sellRate ?? '0') ?? 0);
-                  databaseApi.setUserId(authApi.userid);
-                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
-                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
-                  databaseApi.setTeamId(playersdata?.teamname);
-                  databaseApi.clearOrder();
-                  _showPlayerDetailsModal(context, "sell");
+                  final rate = int.parse(playersdata!.sellRate);
+                  if (walletApi.balance < rate) {
+                    Fluttertoast.showToast(
+                      msg: "Wallet Balance is low, Please Add Money.",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                    );
+                    Navigator.pushNamed(context, WalletPage.routeName);
+                  } else {
+                    databaseApi.setOrderType("sell");
+                    databaseApi.setPlayerPrice(
+                        double.tryParse(playersdata?.sellRate ?? '0') ?? 0);
+                    databaseApi.setUserId(authApi.userid);
+                    databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                    databaseApi.setPlayerId(playersdata?.playerkey.toString());
+                    databaseApi.setTeamId(playersdata?.teamname);
+                    databaseApi.clearOrder();
+                    _showPlayerDetailsModal(context, "sell");
+                  }
                 },
                 child: Container(
                   padding:

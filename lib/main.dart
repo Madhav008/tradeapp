@@ -1,7 +1,9 @@
+import 'package:fanxange/appwrite/wallet_provider.dart';
+import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
+import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/pages/ExcutionPage.dart';
 import 'package:fanxange/pages/HomePage.dart';
 import 'package:fanxange/pages/Notification.dart';
 import 'package:fanxange/pages/SignIn.dart';
@@ -18,6 +20,9 @@ void main() {
       ),
       ChangeNotifierProvider(
         create: ((context) => DatabaseAPI()),
+      ),
+      ChangeNotifierProvider(
+        create: ((context) => WalletProvider()),
       ),
     ],
     child: const MyApp(),
@@ -42,7 +47,8 @@ class MyApp extends StatelessWidget {
         SignUp.routeName: (context) => const SignUp(),
         NotificationPage.routeName: (context) => const NotificationPage(),
         PlayerPrice.routeName: (context) => const PlayerPrice(),
-        ExecutionPage.routeName: (context) => const ExecutionPage(),
+        PlayersOrdersPage.routeName: (context) => const PlayersOrdersPage(),
+        WalletPage.routeName: (context) => WalletPage(),
       },
       home: value == AuthStatus.authenticated ? MyHomePage() : const SignIn(),
     );

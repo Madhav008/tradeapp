@@ -1,5 +1,5 @@
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/components/PlayerListTile.dart';
+import 'package:fanxange/components/PlayerOrderTile.dart';
 import 'package:fanxange/pages/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
@@ -7,10 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class PlayerPrice extends StatelessWidget {
-  static String routeName = "/players";
+class PlayersOrdersPage extends StatelessWidget {
+  static String routeName = "/playerOrders";
 
-  const PlayerPrice({Key? key});
+  const PlayersOrdersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,42 +40,36 @@ class PlayerPrice extends StatelessWidget {
             databaseAPI.getPlayersData();
           });
         },
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+        child: ListView.builder(
           // shrinkWrap: true,
           itemCount: databaseAPI.playersdata?.length,
           itemBuilder: (context, index) {
             var ipodata = databaseAPI.playersdata?[index];
-            return PlayerListTile(playersdata: ipodata);
+            return PlayerOrderTile(playersdata: ipodata);
           },
         ),
       ),
     );
   }
 
-  GridView _teamA(DatabaseAPI databaseAPI) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+  ListView _teamA(DatabaseAPI databaseAPI) {
+    return ListView.builder(
       // shrinkWrap: true,
       itemCount: databaseAPI.teamAPlayers.length,
       itemBuilder: (context, index) {
         var ipodata = databaseAPI.teamAPlayers[index];
-        return PlayerListTile(playersdata: ipodata);
+        return PlayerOrderTile(playersdata: ipodata);
       },
     );
   }
 
-  GridView _teamB(DatabaseAPI databaseAPI) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+  ListView _teamB(DatabaseAPI databaseAPI) {
+    return ListView.builder(
       // shrinkWrap: true,
       itemCount: databaseAPI.teamBPlayers.length,
       itemBuilder: (context, index) {
         var ipodata = databaseAPI.teamBPlayers[index];
-        return PlayerListTile(playersdata: ipodata);
+        return PlayerOrderTile(playersdata: ipodata);
       },
     );
   }
