@@ -119,8 +119,9 @@ class PlayerListTile extends StatelessWidget {
               InkWell(
                 onTap: () {
                   final rate = int.parse(playersdata!.buyRate);
-                  context.read<WalletProvider>().getWallet(authApi.userid);
-
+                  // context.read<WalletProvider>().getWallet(authApi.userid);
+                  print("Balance from the page ======" +
+                      walletApi.balance.toString());
                   if (walletApi.balance < rate) {
                     Fluttertoast.showToast(
                       msg: "Wallet Balance is low, Please Add Money.",

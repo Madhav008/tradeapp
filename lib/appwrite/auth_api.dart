@@ -1,8 +1,4 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/Model/UsersModel.dart';
@@ -17,11 +13,11 @@ enum AuthStatus {
 class AuthAPI extends ChangeNotifier {
   final Dio _dio = Dio();
   AuthStatus _status = AuthStatus.uninitialized;
-  User? _currentUser;
+  static User? _currentUser;
   late SharedPreferences _prefs;
 
   AuthStatus get status => _status;
-  User get currentUser => _currentUser!;
+  static User? get currentUser => _currentUser;
   String? get username => _currentUser?.user.displayName;
   String? get email => _currentUser?.user.email;
   String? get userid => _currentUser?.user.id;
@@ -47,11 +43,16 @@ class AuthAPI extends ChangeNotifier {
             'Authorization': 'Bearer $token',
           }),
         );
-        _currentUser = User.fromJson(response.data);
-        _status = AuthStatus.authenticated;
-        await WalletProvider().getWallet(_currentUser?.user?.id);
-        await DatabaseAPI().getUserOrder(_currentUser?.user?.id);
-        notifyListeners();
+        if (response.statusCode == 200) {
+          _status = AuthStatus.authenticated;
+          _currentUser = User.fromJson(response.data);
+          notifyListeners();
+          // await WalletProvider().getWallet(_currentUser?.user?.id);
+          // await DatabaseAPI().getUserOrder(_currentUser?.user?.id);
+        } else {
+          _status = AuthStatus.unauthenticated;
+          notifyListeners();
+        }
       } else {
         _status = AuthStatus.unauthenticated;
         notifyListeners();

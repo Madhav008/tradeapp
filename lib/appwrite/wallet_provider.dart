@@ -18,6 +18,11 @@ class WalletProvider with ChangeNotifier {
 
   Future<void> getWallet(String? userid) async {
     try {
+      if (userid == null) {
+        print("Error: User ID is null in getWallet");
+        // Handle the case where userid is null
+        return;
+      }
       final wallet = await Dio().get(GET_WALLET_ENDPOINT + '/${userid}');
       print(wallet.data);
       _balance = jsonDecode(jsonEncode(wallet.data))['balance'].toDouble();

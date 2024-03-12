@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:fanxange/Model/MatchesModel.dart';
 import 'package:fanxange/Model/PlayerModel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseAPI with ChangeNotifier {
   // Getter
@@ -369,13 +368,20 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
-  getUserOrder(userid) async {
+  getUserOrder(String? userid) async {
     try {
       _isUserOrderLoading = true;
       notifyListeners();
 
-      final response = await Dio().get('$GETUSERR_ORDER_ENDPOINT/${userid}');
-      print('$GETUSERR_ORDER_ENDPOINT/${userid}');
+      if (userid == null) {
+        print("Error: User ID is null in GetUserOrder");
+        // Handle the case where userid is null
+        return;
+      }
+
+      final response = await Dio().get('$GETUSERR_ORDER_ENDPOINT/$userid');
+      print('$GETUSERR_ORDER_ENDPOINT/$userid');
+
       if (response.data is List) {
         List<dynamic> userOrders = response.data;
         List<MatchElement> luserMatches = [];
@@ -410,9 +416,9 @@ class DatabaseAPI with ChangeNotifier {
         _userPlayers = luserPlayers;
         _userOrdersList = luserOrdersList;
 
-        print("User Matches: $userMatches");
-        print("User Players: $userPlayers");
-        print("User Orders: $userOrdersList");
+        // print("User Matches: $userMatches");
+        // print("User Players: $userPlayers");
+        // print("User Orders: $userOrdersList");
 
         _isUserOrderLoading = false;
         notifyListeners();

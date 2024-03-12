@@ -34,7 +34,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final value = context.watch<AuthAPI>().status;
+    final value = context.watch<AuthAPI>();
+    final status = value.status;
+    final userid = AuthAPI.currentUser?.user.id;
+
+    context.read<WalletProvider>().getWallet(userid);
+    context.read<DatabaseAPI>().getUserOrder(userid);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -50,7 +56,11 @@ class MyApp extends StatelessWidget {
         PlayersOrdersPage.routeName: (context) => const PlayersOrdersPage(),
         WalletPage.routeName: (context) => WalletPage(),
       },
-      home: value == AuthStatus.authenticated ? MyHomePage() : const SignIn(),
+      home: status == AuthStatus.uninitialized
+          ? Scaffold(body: Center(child: CircularProgressIndicator()))
+          : status == AuthStatus.authenticated
+              ? MyHomePage()
+              : const SignIn(),
     );
   }
 }
