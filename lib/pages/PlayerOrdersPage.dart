@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/components/PlayerOrderTile.dart';
 import 'package:fanxange/pages/Notification.dart';

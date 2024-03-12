@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, use_key_in_widget_constructors, library_private_types_in_public_api, prefer_const_constructors, prefer_final_fields
 
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/pages/PortfolioPage.dart';
 import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
