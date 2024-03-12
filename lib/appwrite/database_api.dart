@@ -332,7 +332,6 @@ class DatabaseAPI with ChangeNotifier {
           playerid: _playerid,
           teamid: _teamid,
           walletId: userid);
-
       await createOrderHelper(myOrder);
       clearOrder();
       Fluttertoast.showToast(

@@ -119,29 +119,16 @@ class PlayerListTile extends StatelessWidget {
               InkWell(
                 onTap: () {
                   final rate = int.parse(playersdata!.buyRate);
-                  // context.read<WalletProvider>().getWallet(authApi.userid);
-                  print("Balance from the page ======" +
-                      walletApi.balance.toString());
-                  if (walletApi.balance < rate) {
-                    Fluttertoast.showToast(
-                      msg: "Wallet Balance is low, Please Add Money.",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                    );
-                    Navigator.pushNamed(context, WalletPage.routeName);
-                  } else {
-                    databaseApi.setOrderType("buy");
-                    databaseApi.setPlayerPrice(
-                        double.tryParse(playersdata?.buyRate ?? '0') ?? 0);
-                    databaseApi.setMatchId(databaseApi.matchdata.matchkey);
-                    databaseApi.setPlayerId(playersdata?.playerkey.toString());
-                    databaseApi.setTeamId(playersdata?.teamname);
-                    databaseApi.setUserId(authApi.userid);
-                    databaseApi.clearOrder();
-                    _showPlayerDetailsModal(context, "buy");
-                  }
+
+                  databaseApi.setOrderType("buy");
+                  databaseApi.setPlayerPrice(
+                      double.tryParse(playersdata?.buyRate ?? '0') ?? 0);
+                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
+                  databaseApi.setTeamId(playersdata?.teamname);
+                  databaseApi.setUserId(authApi.userid);
+                  databaseApi.clearOrder();
+                  _showPlayerDetailsModal(context, "buy");
                 },
                 child: Container(
                   padding:
@@ -163,29 +150,15 @@ class PlayerListTile extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  final rate = int.parse(playersdata!.sellRate);
-                  context.read<WalletProvider>().getWallet(authApi.userid);
-
-                  if (walletApi.balance < rate) {
-                    Fluttertoast.showToast(
-                      msg: "Wallet Balance is low, Please Add Money.",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                    );
-                    Navigator.pushNamed(context, WalletPage.routeName);
-                  } else {
-                    databaseApi.setOrderType("sell");
-                    databaseApi.setPlayerPrice(
-                        double.tryParse(playersdata?.sellRate ?? '0') ?? 0);
-                    databaseApi.setUserId(authApi.userid);
-                    databaseApi.setMatchId(databaseApi.matchdata.matchkey);
-                    databaseApi.setPlayerId(playersdata?.playerkey.toString());
-                    databaseApi.setTeamId(playersdata?.teamname);
-                    databaseApi.clearOrder();
-                    _showPlayerDetailsModal(context, "sell");
-                  }
+                  databaseApi.setOrderType("sell");
+                  databaseApi.setPlayerPrice(
+                      double.tryParse(playersdata?.sellRate ?? '0') ?? 0);
+                  databaseApi.setUserId(authApi.userid);
+                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
+                  databaseApi.setTeamId(playersdata?.teamname);
+                  databaseApi.clearOrder();
+                  _showPlayerDetailsModal(context, "sell");
                 },
                 child: Container(
                   padding:
@@ -221,6 +194,9 @@ class PlayerListTile extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         final databaseApi = context.watch<DatabaseAPI>();
+        final walletApi = context.watch<WalletProvider>();
+        final authApi = context.read<AuthAPI>();
+
         return SingleChildScrollView(
           child: Container(
             width: double.infinity,
@@ -322,11 +298,22 @@ class PlayerListTile extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle the action (buy or sell)
-                        // You can add logic here to execute the order
-                        databaseApi.createOrder();
+                        walletApi.getWallet(authApi.userid);
+                        if (walletApi.balance < databaseApi.totalAmount) {
+                          Fluttertoast.showToast(
+                            msg: "Wallet Balance is low, Please Add Money.",
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                          );
+                          Navigator.pop(context);
 
-                        Navigator.pop(context);
+                          Navigator.pushNamed(context, WalletPage.routeName);
+                        } else {
+                          databaseApi.createOrder();
+                          Navigator.pop(context);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         primary: type == 'sell'
