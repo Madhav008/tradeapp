@@ -19,7 +19,7 @@ class WalletProvider with ChangeNotifier {
   Future<void> getWallet(String? userid) async {
     try {
       final wallet = await Dio().get(GET_WALLET_ENDPOINT + '/${userid}');
-      // print(wallet.data);
+      print(wallet.data);
       _balance = jsonDecode(jsonEncode(wallet.data))['balance'].toDouble();
       _walletId = jsonDecode(jsonEncode(wallet.data))['wallet']['_id'];
       _userid = userid;

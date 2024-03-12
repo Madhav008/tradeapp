@@ -8,10 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:fanxange/Model/MatchesModel.dart';
 import 'package:fanxange/Model/PlayerModel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseAPI with ChangeNotifier {
-  final AuthAPI authApi = AuthAPI();
-
   // Getter
   MatchElement? _matchlist;
   MatchElement? get matchlist => _matchlist;
@@ -358,7 +357,7 @@ class DatabaseAPI with ChangeNotifier {
         textColor: Colors.white,
       );
     }
-    await getUserOrder();
+    await getUserOrder(userid);
   }
 
   createOrderHelper(Order order) async {
@@ -370,13 +369,13 @@ class DatabaseAPI with ChangeNotifier {
     }
   }
 
-  getUserOrder() async {
+  getUserOrder(userid) async {
     try {
       _isUserOrderLoading = true;
       notifyListeners();
-      final response =
-          await Dio().get('$GETUSERR_ORDER_ENDPOINT/${authApi?.userid}');
-      print('$GETUSERR_ORDER_ENDPOINT/${authApi?.userid}');
+
+      final response = await Dio().get('$GETUSERR_ORDER_ENDPOINT/${userid}');
+      print('$GETUSERR_ORDER_ENDPOINT/${userid}');
       if (response.data is List) {
         List<dynamic> userOrders = response.data;
         List<MatchElement> luserMatches = [];

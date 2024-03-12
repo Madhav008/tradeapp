@@ -24,15 +24,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      if (_selectedIndex == 0) {
-        context.read<DatabaseAPI>().setIsPortfolio(true);
-        context.read<DatabaseAPI>().getUserOrder();
-      }
-
-      if (_selectedIndex == 1) {
-        context.read<DatabaseAPI>().setIsPortfolio(false);
-      }
       _selectedIndex = index;
+
+      if (index == 0) {
+        context.read<DatabaseAPI>().setIsPortfolio(false);
+      } else if (index == 1) {
+        context.read<DatabaseAPI>().setIsPortfolio(true);
+      }
     });
   }
 

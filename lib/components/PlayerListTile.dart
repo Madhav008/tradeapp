@@ -21,7 +21,6 @@ class PlayerListTile extends StatelessWidget {
     final authApi = context.read<AuthAPI>();
     final databaseApi = context.read<DatabaseAPI>();
     final walletApi = context.watch<WalletProvider>();
-    walletApi.getWallet(authApi.userid);
     return Card(
       elevation: 1,
       color: Colors.white,
@@ -69,7 +68,9 @@ class PlayerListTile extends StatelessWidget {
                         width: 70,
                         height: 25,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFE9879),
+                          color: playersdata?.team == 'team1'
+                              ? Color.fromARGB(218, 245, 112, 72)
+                              : Colors.black,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Center(
@@ -118,6 +119,8 @@ class PlayerListTile extends StatelessWidget {
               InkWell(
                 onTap: () {
                   final rate = int.parse(playersdata!.buyRate);
+                  context.read<WalletProvider>().getWallet(authApi.userid);
+
                   if (walletApi.balance < rate) {
                     Fluttertoast.showToast(
                       msg: "Wallet Balance is low, Please Add Money.",
@@ -160,6 +163,8 @@ class PlayerListTile extends StatelessWidget {
               InkWell(
                 onTap: () {
                   final rate = int.parse(playersdata!.sellRate);
+                  context.read<WalletProvider>().getWallet(authApi.userid);
+
                   if (walletApi.balance < rate) {
                     Fluttertoast.showToast(
                       msg: "Wallet Balance is low, Please Add Money.",
@@ -185,8 +190,8 @@ class PlayerListTile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors
-                        .transparent, // Transparent background for Sell button
+                    color: Color(
+                        0xFF21899C), // Transparent background for Sell button
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(
                         color: const Color(
@@ -196,7 +201,7 @@ class PlayerListTile extends StatelessWidget {
                     "Sell: ₹${playersdata?.sellRate.toString() ?? ''}",
                     style: GoogleFonts.openSans(
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF21899C),
+                      color: Colors.white,
                       fontSize: 14,
                     ),
                   ),

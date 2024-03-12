@@ -10,14 +10,9 @@ import 'package:fanxange/components/MatchListTile.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class PortfolioPage extends StatefulWidget {
+class PortfolioPage extends StatelessWidget {
   PortfolioPage({Key? key});
 
-  @override
-  State<PortfolioPage> createState() => _PortfolioPageState();
-}
-
-class _PortfolioPageState extends State<PortfolioPage> {
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
@@ -26,7 +21,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
       child: Scaffold(
         appBar: _appBar(context),
         body: databaseAPI.isUserOrderLoading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : TabBarView(
@@ -43,12 +38,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
     return RefreshIndicator(
       onRefresh: () async {
         // Add logic to fetch updated data
-        databaseAPI.getUserOrder();
+        databaseAPI.getUserOrder(databaseAPI.userid);
       },
       child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,
         child: databaseAPI.userMatches?.length == 0
-            ? Center(
+            ? const Center(
                 child: Text("No Orders Present"),
               )
             : ListView.builder(
@@ -67,12 +62,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
     return RefreshIndicator(
       onRefresh: () async {
         // Add logic to fetch updated data
-        databaseAPI.getUserOrder();
+        databaseAPI.getUserOrder(databaseAPI.userid);
       },
       child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,
         child: databaseAPI.userCompletedMatches?.length == 0
-            ? Center(
+            ? const Center(
                 child: Text("No Completed Orders Present"),
               )
             : ListView.builder(

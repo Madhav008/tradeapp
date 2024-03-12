@@ -65,30 +65,25 @@ class _WalletPageState extends State<WalletPage> {
                 enabled: walletApi.isTransactionLoading,
                 child: ListView.builder(
                   itemCount: walletApi.transactions.length,
-                  reverse: true,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    DateTime dateTime =
-                        DateTime.parse(walletApi.transactions[index].date);
+                    var walletdata =
+                        walletApi.transactions.reversed.elementAt(index);
+                    DateTime dateTime = DateTime.parse(walletdata.date);
                     String formattedDate =
                         DateFormat('dd MMM,yyyy hh:mm').format(dateTime);
 
                     return Column(
                       children: [
                         ListTile(
-                          subtitle: Text(
-                              'Id: ${walletApi.transactions[index].transactionId}'),
+                          subtitle: Text('Id: ${walletdata.transactionId}'),
                           trailing: RichText(
                             text: TextSpan(
-                              text:
-                                  walletApi.transactions[index].type == 'debit'
-                                      ? '-₹'
-                                      : '+₹',
+                              text: walletdata.type == 'debit' ? '- ₹' : '+ ₹',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                color: walletApi.transactions[index].type ==
-                                        'debit'
+                                color: walletdata.type == 'debit'
                                     ? Colors
                                         .blue // Set the color for debit transactions
                                     : Colors
@@ -96,13 +91,11 @@ class _WalletPageState extends State<WalletPage> {
                               ),
                               children: [
                                 TextSpan(
-                                  text:
-                                      '${walletApi.transactions[index].amount}',
+                                  text: '${walletdata.amount}',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: walletApi.transactions[index].type ==
-                                            'debit'
+                                    color: walletdata.type == 'debit'
                                         ? Colors
                                             .blue // Set the color for debit transactions
                                         : Colors

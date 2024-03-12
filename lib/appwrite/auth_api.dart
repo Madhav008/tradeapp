@@ -48,10 +48,9 @@ class AuthAPI extends ChangeNotifier {
           }),
         );
         _currentUser = User.fromJson(response.data);
-        await WalletProvider().getWallet(_currentUser?.user?.id);
-        await _prefs.setString('userid', _currentUser!.user.id);
-
         _status = AuthStatus.authenticated;
+        await WalletProvider().getWallet(_currentUser?.user?.id);
+        await DatabaseAPI().getUserOrder(_currentUser?.user?.id);
         notifyListeners();
       } else {
         _status = AuthStatus.unauthenticated;

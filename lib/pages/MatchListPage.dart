@@ -47,7 +47,9 @@ class MatchListPage extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: databaseAPI.notStartedMatches?.matches.length ?? 0,
                 itemBuilder: (context, index) {
-                  var matchdata = databaseAPI.notStartedMatches?.matches[index];
+                  var matchdata = databaseAPI
+                      .notStartedMatches?.matches.reversed
+                      .elementAt(index);
                   return MatchListTile(matchdata: matchdata);
                 },
               ),
@@ -72,8 +74,9 @@ class MatchListPage extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: databaseAPI.startedMatches?.matches.length ?? 0,
                 itemBuilder: (context, index) {
-                  var ipodata = databaseAPI.startedMatches?.matches[index];
-                  return MatchListTile(matchdata: ipodata);
+                  var matchdata = databaseAPI.startedMatches?.matches.reversed
+                      .elementAt(index);
+                  return MatchListTile(matchdata: matchdata);
                 }),
       ),
     );
@@ -96,8 +99,9 @@ class MatchListPage extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: databaseAPI.completedMatches?.matches.length ?? 0,
                 itemBuilder: (context, index) {
-                  var ipodata = databaseAPI.completedMatches?.matches[index];
-                  return MatchListTile(matchdata: ipodata);
+                  var matchdata = databaseAPI.completedMatches?.matches.reversed
+                      .elementAt(index);
+                  return MatchListTile(matchdata: matchdata);
                 }),
       ),
     );
