@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Import FlutterToast
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import FlutterToast
 
 class WalletProvider with ChangeNotifier {
   double _balance = 0.00;
@@ -16,15 +17,29 @@ class WalletProvider with ChangeNotifier {
   bool get walletLoading => _isLoading;
   double get balance => _balance;
 
+  getStringFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? myString = prefs.getString('token');
+    return myString;
+  }
+
   Future<void> getWallet(String? userid) async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       if (userid == null) {
         print("Error: User ID is null in getWallet");
         // Handle the case where userid is null
         return;
       }
-      final wallet = await Dio().get(GET_WALLET_ENDPOINT + '/${userid}');
-      print(wallet.data);
+      final wallet = await Dio().get(
+        GET_WALLET_ENDPOINT + '/${userid}', // Replace with your API endpoint
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_token}',
+        }),
+      );
+      // print(wallet.data);
       _balance = jsonDecode(jsonEncode(wallet.data))['balance'].toDouble();
       _walletId = jsonDecode(jsonEncode(wallet.data))['wallet']['_id'];
       _userid = userid;
@@ -38,12 +53,18 @@ class WalletProvider with ChangeNotifier {
   }
 
   Future<void> addMoney(double amount) async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       _isLoading = true;
       notifyListeners();
 
-      await Dio()
-          .post(DEPOSIT_ENDPOINT, data: {"userid": _userid, "amount": amount});
+      await Dio().post(DEPOSIT_ENDPOINT, // Replace with your API endpoint
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${_token}',
+          }),
+          data: {"userid": _userid, "amount": amount});
       await getWallet(_userid);
       _isLoading = false;
       notifyListeners();
@@ -60,12 +81,18 @@ class WalletProvider with ChangeNotifier {
   }
 
   Future<void> withdrawMoney(double amount) async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       _isLoading = true;
       notifyListeners();
 
-      await Dio()
-          .post(WITHDRAW_ENDPOINT, data: {"userid": _userid, "amount": amount});
+      await Dio().post(WITHDRAW_ENDPOINT, // Replace with your API endpoint
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${_token}',
+          }),
+          data: {"userid": _userid, "amount": amount});
       await getWallet(_userid);
 
       _isLoading = false;
@@ -83,11 +110,20 @@ class WalletProvider with ChangeNotifier {
   }
 
   getTrasactions() async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       _isTransactionLoading = true;
       notifyListeners();
 
-      final res = await Dio().get(TRANSACTION_ENDPOINT + '/${_walletId}');
+      final res = await Dio().get(
+        TRANSACTION_ENDPOINT +
+            '/${_walletId}', // Replace with your API endpoint
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_token}',
+        }),
+      );
 
       final List<dynamic> transData = res.data['userTransactions'];
 

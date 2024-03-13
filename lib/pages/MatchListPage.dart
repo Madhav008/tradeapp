@@ -16,7 +16,7 @@ class MatchListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
     // databaseAPI.seprateMatchList();
-
+    // context.read<DatabaseAPI>().seprateMatchList();
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
@@ -37,13 +37,13 @@ class MatchListPage extends StatelessWidget {
       onRefresh: () async {
         databaseAPI.seprateMatchList();
       },
-      child: Skeletonizer(
-        enabled: databaseAPI.isMatchLoading,
-        child: databaseAPI.notStartedMatches?.matches.length == 0
-            ? Center(
-                child: Text("No Upcoming Matches"),
-              )
-            : ListView.builder(
+      child: databaseAPI.notStartedMatches == null
+          ? const Center(
+              child: Text("No Upcoming Matches"),
+            )
+          : Skeletonizer(
+              enabled: databaseAPI.isMatchLoading,
+              child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: databaseAPI.notStartedMatches?.matches.length ?? 0,
                 itemBuilder: (context, index) {
@@ -53,7 +53,7 @@ class MatchListPage extends StatelessWidget {
                   return MatchListTile(matchdata: matchdata);
                 },
               ),
-      ),
+            ),
     );
   }
 
@@ -64,21 +64,21 @@ class MatchListPage extends StatelessWidget {
           databaseAPI.seprateMatchList();
         });
       },
-      child: Skeletonizer(
-        enabled: databaseAPI.isMatchLoading,
-        child: databaseAPI.startedMatches?.matches.length == 0
-            ? Center(
-                child: Text("No Live Matches"),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: databaseAPI.startedMatches?.matches.length ?? 0,
-                itemBuilder: (context, index) {
-                  var matchdata = databaseAPI.startedMatches?.matches.reversed
-                      .elementAt(index);
-                  return MatchListTile(matchdata: matchdata);
-                }),
-      ),
+      child: databaseAPI.startedMatches == null
+          ? const Center(
+              child: Text("No Live Matches"),
+            )
+          : Skeletonizer(
+              enabled: databaseAPI.isMatchLoading,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: databaseAPI.startedMatches?.matches.length ?? 0,
+                  itemBuilder: (context, index) {
+                    var matchdata = databaseAPI.startedMatches?.matches.reversed
+                        .elementAt(index);
+                    return MatchListTile(matchdata: matchdata);
+                  }),
+            ),
     );
   }
 
@@ -89,21 +89,22 @@ class MatchListPage extends StatelessWidget {
           databaseAPI.seprateMatchList();
         });
       },
-      child: Skeletonizer(
-        enabled: databaseAPI.isMatchLoading,
-        child: databaseAPI.completedMatches?.matches.length == 0
-            ? Center(
-                child: Text("No Completed Matches"),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: databaseAPI.completedMatches?.matches.length ?? 0,
-                itemBuilder: (context, index) {
-                  var matchdata = databaseAPI.completedMatches?.matches.reversed
-                      .elementAt(index);
-                  return MatchListTile(matchdata: matchdata);
-                }),
-      ),
+      child: databaseAPI.completedMatches == null
+          ? const Center(
+              child: Text("No Completed Matches"),
+            )
+          : Skeletonizer(
+              enabled: databaseAPI.isMatchLoading,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: databaseAPI.completedMatches?.matches.length ?? 0,
+                  itemBuilder: (context, index) {
+                    var matchdata = databaseAPI
+                        .completedMatches?.matches.reversed
+                        .elementAt(index);
+                    return MatchListTile(matchdata: matchdata);
+                  }),
+            ),
     );
   }
 

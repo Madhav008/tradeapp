@@ -1,9 +1,8 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'package:fanxange/components/CustomExpansionTile.dart';
+import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/pages/Notification.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,46 +70,21 @@ class _WalletPageState extends State<WalletPage> {
                         walletApi.transactions.reversed.elementAt(index);
                     DateTime dateTime = DateTime.parse(walletdata.date);
                     String formattedDate =
-                        DateFormat('dd MMM,yyyy hh:mm').format(dateTime);
+                        DateFormat('dd MMM yyyy hh:MM').format(dateTime);
 
                     return Column(
                       children: [
-                        ListTile(
-                          subtitle: Text('Id: ${walletdata.transactionId}'),
-                          trailing: RichText(
-                            text: TextSpan(
-                              text: walletdata.type == 'debit' ? '- ₹' : '+ ₹',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: walletdata.type == 'debit'
-                                    ? Colors
-                                        .blue // Set the color for debit transactions
-                                    : Colors
-                                        .green, // Set the color for other transactions
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: '${walletdata.amount}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: walletdata.type == 'debit'
-                                        ? Colors
-                                            .blue // Set the color for debit transactions
-                                        : Colors
-                                            .green, // Set the color for other transactions
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          title: Text(
-                            '${formattedDate}',
-                            style: TextStyle(fontSize: 16),
-                          ),
+                        CustomExpansionTile(
+                          title: 'Deposit',
+                          subtitle: formattedDate,
+                          trailingText: walletdata.amount.toString(),
+                          trailingIcon: Icons.arrow_drop_down,
+                          type: walletdata.type,
+                          transId: walletdata.transactionId,
                         ),
-                        Divider(),
+                        SizedBox(
+                          height: 10,
+                        )
                       ],
                     );
                   },
@@ -289,22 +263,6 @@ class _WalletPageState extends State<WalletPage> {
       },
     );
   }
-
-  // void _loading(BuildContext ctx) {
-  //   showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (BuildContext context) {
-  //         return const Dialog(
-  //           backgroundColor: Colors.transparent,
-  //           child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //               children: [
-  //                 CircularProgressIndicator(),
-  //               ]),
-  //         );
-  //       });
-  // }
 
   AppBar _appBar(BuildContext context) {
     return AppBar(

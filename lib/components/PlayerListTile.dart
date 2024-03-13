@@ -33,11 +33,17 @@ class PlayerListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Image.network(
-                  playersdata?.image ?? '',
-                  height: 60,
-                  width: 60,
-                ),
+                playersdata?.image != null
+                    ? Image.network(
+                        playersdata?.image ?? '',
+                        height: 60,
+                        width: 60,
+                      )
+                    : Image.asset(
+                        'assets/images/avtar1.png',
+                        height: 60,
+                        width: 60,
+                      ),
                 const SizedBox(
                   width: 5,
                 ),

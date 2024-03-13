@@ -33,15 +33,15 @@ class PlayerPrice extends StatelessWidget {
     );
   }
 
-  Skeletonizer _allPlayers(DatabaseAPI databaseAPI) {
-    return Skeletonizer(
-      enabled: databaseAPI.isPlayerLoading,
-      child: RefreshIndicator(
-        onRefresh: () {
-          return Future.delayed(Duration(seconds: 1), () {
-            databaseAPI.getPlayersData();
-          });
-        },
+  RefreshIndicator _allPlayers(DatabaseAPI databaseAPI) {
+    return RefreshIndicator(
+      onRefresh: () {
+        return Future.delayed(Duration(seconds: 1), () {
+          databaseAPI.getPlayersData();
+        });
+      },
+      child: Skeletonizer(
+        enabled: databaseAPI.isPlayerLoading,
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),

@@ -40,11 +40,13 @@ class MatchListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Image.network(
-                  matchdata?.team1Logo ?? '',
-                  height: 60,
-                  width: 60,
-                ),
+                matchdata?.team1Logo != null
+                    ? Image.network(
+                        matchdata?.team1Logo ?? '',
+                        height: 60,
+                        width: 50,
+                      )
+                    : Image.asset('assets/images/avtar1.png'),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,11 +116,13 @@ class MatchListTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                Image.network(
-                  matchdata?.team2Logo ?? '',
-                  height: 60,
-                  width: 60,
-                ),
+                matchdata?.team1Logo != null
+                    ? Image.network(
+                        matchdata?.team2Logo ?? '',
+                        height: 60,
+                        width: 50,
+                      )
+                    : Image.asset('assets/images/avtar1.png'),
               ],
             ),
           ),

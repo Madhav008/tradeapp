@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fanxange/Model/MatchesModel.dart';
 import 'package:fanxange/Model/PlayerModel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseAPI with ChangeNotifier {
   // Getter
@@ -114,8 +115,15 @@ class DatabaseAPI with ChangeNotifier {
     getPlatformFees();
   }
 
+  getStringFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? myString = prefs.getString('token');
+    return myString;
+  }
+
   // Modify this function to use Dio for fetching matches
   void seprateMatchList() async {
+    final _token = await getStringFromSharedPreferences();
     try {
       _isMatchLoading = true;
       notifyListeners();
@@ -125,37 +133,38 @@ class DatabaseAPI with ChangeNotifier {
         MATCH_UPCOMING, // Replace with your API endpoint
         options: Options(headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer ${authApi.currentUser.token}',
+          'Authorization': 'Bearer ${_token}',
         }),
       );
       _notStartedMatches = Match.fromJson(upcomingResponse.data);
-      notifyListeners();
 
       // Fetch live matches
       Response<dynamic> liveResponse = await dio.get(
         MATCH_LIVE, // Replace with your API endpoint
         options: Options(headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer ${authApi.currentUser.token}',
+          'Authorization': 'Bearer ${_token}',
         }),
       );
 
       _startedMatches = Match.fromJson(liveResponse.data);
-      notifyListeners();
 
       // Fetch completed matches
       Response<dynamic> completedResponse = await dio.get(
         MATCH_RESULT, // Replace with your API endpoint
         options: Options(headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer ${authApi.currentUser.token}',
+          'Authorization': 'Bearer ${_token}',
         }),
       );
-
       _completedMatches = Match.fromJson(completedResponse.data);
       notifyListeners();
+
+      // print("upcoming Matches: ${notStartedMatches?.matches.length}");
+      // print("live Matches: ${startedMatches?.matches.length}");
+      // print("completed Matches: ${completedMatches?.matches.length}");
     } catch (e) {
-      print("Error in seprateMatchList: $e");
+      print("Error in separateMatchList: $e");
       Fluttertoast.showToast(
         msg: "Failed to fetch match list. Please try again later.",
         toastLength: Toast.LENGTH_SHORT,
@@ -164,6 +173,10 @@ class DatabaseAPI with ChangeNotifier {
         textColor: Colors.white,
       );
     } finally {
+      // print("Made the match data loading false");
+      // print("upcoming Matches: $_notStartedMatches");
+      // print("live Matches: $_startedMatches");
+      // print("completed Matches: $_completedMatches");
       _isMatchLoading = false;
       notifyListeners();
     }
@@ -171,6 +184,8 @@ class DatabaseAPI with ChangeNotifier {
 
   // Modify this function to use Dio for fetching player data
   void getPlayersData() async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       _isPlayerLoading = true;
       notifyListeners();
@@ -180,7 +195,7 @@ class DatabaseAPI with ChangeNotifier {
             await dio.post(PLAYER_ENDPOINT, // Replace with your API endpoint
                 options: Options(headers: {
                   'Content-Type': 'application/json',
-                  // 'Authorization': 'Bearer ${authApi.currentUser.token}',
+                  'Authorization': 'Bearer ${_token}',
                 }),
                 data: {
               "matchkey": matchdata.matchkey,
@@ -238,9 +253,17 @@ class DatabaseAPI with ChangeNotifier {
   }
 
   Future<void> getPlatformFees() async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       // Make a Dio request
-      final response = await Dio().get(FEES_ENDPOINT);
+      final response = await Dio().get(
+        FEES_ENDPOINT,
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_token}',
+        }),
+      );
       if (response.statusCode == 200) {
         _platformFees = response.data['fees'];
         // print(_platformFees);
@@ -359,8 +382,15 @@ class DatabaseAPI with ChangeNotifier {
   }
 
   createOrderHelper(Order order) async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
-      final res = await dio.post(CREATE_ORDER_ENDPOINT, data: order.toJson());
+      final res = await dio.post(CREATE_ORDER_ENDPOINT,
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${_token}',
+          }),
+          data: order.toJson());
       print(res.data);
     } catch (e) {
       print(e);
@@ -368,6 +398,8 @@ class DatabaseAPI with ChangeNotifier {
   }
 
   getUserOrder(String? userid) async {
+    final _token = await getStringFromSharedPreferences();
+
     try {
       _isUserOrderLoading = true;
       notifyListeners();
@@ -378,7 +410,13 @@ class DatabaseAPI with ChangeNotifier {
         return;
       }
 
-      final response = await Dio().get('$GETUSERR_ORDER_ENDPOINT/$userid');
+      final response = await Dio().get(
+        '$GETUSERR_ORDER_ENDPOINT/$userid',
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_token}',
+        }),
+      );
       print('$GETUSERR_ORDER_ENDPOINT/$userid');
 
       if (response.data is List) {

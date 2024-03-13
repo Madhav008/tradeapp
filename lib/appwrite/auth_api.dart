@@ -81,7 +81,7 @@ class AuthAPI extends ChangeNotifier {
         },
       );
       final user = User.fromJson(response.data);
-      print(response.data);
+      // print(response.data);
       _currentUser = user;
       _status = AuthStatus.authenticated;
       notifyListeners();

@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
 
     context.read<WalletProvider>().getWallet(userid);
     context.read<DatabaseAPI>().getUserOrder(userid);
+    // context.read<DatabaseAPI>().seprateMatchList();
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
