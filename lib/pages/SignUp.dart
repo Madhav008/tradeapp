@@ -1,4 +1,5 @@
 // ignore_for_file: file_names, prefer_const_constructors, unnecessary_const, use_build_context_synchronously
+import 'package:fanxange/pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -338,6 +339,7 @@ class _SignUpState extends State<SignUp> {
           name: nameController.text);
       Navigator.pop(context);
       const snackbar = SnackBar(content: Text('Account created!'));
+      Navigator.pushNamed(context, MyHomePage.routeName);
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     } on Exception catch (e) {
       Navigator.pop(context);

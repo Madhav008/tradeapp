@@ -1,8 +1,10 @@
 // ignore_for_file: file_names
 
 import 'package:fanxange/appwrite/database_api.dart';
+import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/components/PlayerListTile.dart';
 import 'package:fanxange/pages/Notification.dart';
+import 'package:fanxange/pages/ScorecardPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,69 +19,80 @@ class PlayerPrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
-    // databaseAPI.setUpcomingList();
+    final matchkey = databaseAPI.matchdata.matchkey;
+    context.read<PerformanceProvider>().getMatchPerformance(matchkey);
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
-        appBar: ExtendedAppBar(),
-        body: TabBarView(
-          children: [
-            _allPlayers(databaseAPI),
-            _teamA(databaseAPI),
-            _teamB(databaseAPI), // Adjust as needed
-          ],
-        ),
-      ),
+          appBar: ExtendedAppBar(),
+          body: TabBarView(
+            children: [
+              _allPlayers(databaseAPI),
+              _teamA(databaseAPI),
+              _teamB(databaseAPI), // Adjust as needed
+            ],
+          )),
     );
   }
 
-  RefreshIndicator _allPlayers(DatabaseAPI databaseAPI) {
-    return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(Duration(seconds: 1), () {
-          databaseAPI.getPlayersData();
-        });
-      },
-      child: Skeletonizer(
-        enabled: databaseAPI.isPlayerLoading,
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
-          // shrinkWrap: true,
-          itemCount: databaseAPI.playersdata?.length,
-          itemBuilder: (context, index) {
-            var ipodata = databaseAPI.playersdata?[index];
-            return PlayerListTile(playersdata: ipodata);
-          },
-        ),
-      ),
-    );
+  Widget _allPlayers(DatabaseAPI databaseAPI) {
+    return ((databaseAPI.matchdata.status != "started") &&
+            databaseAPI.matchdata.status != "completed")
+        ? RefreshIndicator(
+            onRefresh: () {
+              return Future.delayed(Duration(seconds: 1), () {
+                databaseAPI.getPlayersData();
+              });
+            },
+            child: Skeletonizer(
+              enabled: databaseAPI.isPlayerLoading,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 0.0,
+                    mainAxisExtent: 170),
+                // shrinkWrap: true,
+                itemCount: databaseAPI.playersdata?.length,
+                itemBuilder: (context, index) {
+                  var ipodata = databaseAPI.playersdata?[index];
+                  return PlayerListTile(playersdata: ipodata);
+                },
+              ),
+            ),
+          )
+        : Container();
   }
 
-  GridView _teamA(DatabaseAPI databaseAPI) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
-      // shrinkWrap: true,
-      itemCount: databaseAPI.teamAPlayers.length,
-      itemBuilder: (context, index) {
-        var ipodata = databaseAPI.teamAPlayers[index];
-        return PlayerListTile(playersdata: ipodata);
-      },
-    );
+  Widget _teamA(DatabaseAPI databaseAPI) {
+    return ((databaseAPI.matchdata.status != "started") &&
+            databaseAPI.matchdata.status != "completed")
+        ? GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+            // shrinkWrap: true,
+            itemCount: databaseAPI.teamAPlayers.length,
+            itemBuilder: (context, index) {
+              var ipodata = databaseAPI.teamAPlayers[index];
+              return PlayerListTile(playersdata: ipodata);
+            },
+          )
+        : Container();
   }
 
-  GridView _teamB(DatabaseAPI databaseAPI) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
-      // shrinkWrap: true,
-      itemCount: databaseAPI.teamBPlayers.length,
-      itemBuilder: (context, index) {
-        var ipodata = databaseAPI.teamBPlayers[index];
-        return PlayerListTile(playersdata: ipodata);
-      },
-    );
+  Widget _teamB(DatabaseAPI databaseAPI) {
+    return ((databaseAPI.matchdata.status != "started") &&
+            databaseAPI.matchdata.status != "completed")
+        ? GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+            // shrinkWrap: true,
+            itemCount: databaseAPI.teamBPlayers.length,
+            itemBuilder: (context, index) {
+              var ipodata = databaseAPI.teamBPlayers[index];
+              return PlayerListTile(playersdata: ipodata);
+            },
+          )
+        : Container();
   }
 }
 
@@ -229,12 +242,46 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
+          (databaseAPI.matchdata.status != 'notstarted')
+              ? InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, Scorecard.routeName);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.withOpacity(0.2)),
+                        bottom: BorderSide(color: Colors.grey.withOpacity(0.2)),
+                      ),
+                    ),
+                    height: 45,
+                    width: double.infinity,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Text(
+                            "All Players Stats ",
+                            style: TextStyle(
+                                fontSize: 14.5, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Icon(Icons.arrow_right)
+                      ],
+                    ),
+                  ),
+                )
+              : SizedBox(),
         ],
       ),
     );
   }
 
   @override
-  Size get preferredSize =>
-      Size.fromHeight(200.0); // Set your desired height here
+  Size get preferredSize => (DatabaseAPI().matchdata.status != 'notstarted')
+      ? Size.fromHeight(250.0)
+      : Size.fromHeight(200.0); // Set your desired height here
 }

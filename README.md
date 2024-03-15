@@ -42,8 +42,10 @@
     
 #   Bug
     [] Login Bug => After register when user login not work
-    [] Register Bug => not navigating to Homepage
-
+    
+    [*] Sort the matches
+    [*] Register Bug => not navigating to Homepage
+    [*] Show the player stats screen in completed and live matches
     [*] Throw error when order balance is not there
     [*] When login getting the exception regarding the matches and wallet
     [*] When creating the order portfolio not updating

@@ -138,7 +138,7 @@ class DatabaseAPI with ChangeNotifier {
         }),
       );
       _notStartedMatches = Match.fromJson(upcomingResponse.data);
-
+      _notStartedMatches?.sortMatchesByStartDate();
       // Fetch live matches
       Response<dynamic> liveResponse = await dio.get(
         MATCH_LIVE, // Replace with your API endpoint
@@ -149,6 +149,8 @@ class DatabaseAPI with ChangeNotifier {
       );
 
       _startedMatches = Match.fromJson(liveResponse.data);
+      _startedMatches?.sortMatchesByStartDate();
+
       print(_startedMatches?.matches.length);
       // Fetch completed matches
       Response<dynamic> completedResponse = await dio.get(
@@ -159,6 +161,7 @@ class DatabaseAPI with ChangeNotifier {
         }),
       );
       _completedMatches = Match.fromJson(completedResponse.data);
+      _completedMatches?.sortMatchesByStartDate();
       notifyListeners();
 
       // print("upcoming Matches: ${notStartedMatches?.matches.length}");
@@ -449,8 +452,13 @@ class DatabaseAPI with ChangeNotifier {
           }
         }
 
+        if (luserMatches.isNotEmpty) {
+          luserMatches.sort((a, b) => b.startDate.compareTo(a.startDate));
+        }
+
         _userMatches =
             luserMatches.where((e) => e.status == 'notstarted').toList();
+
         _userCompletedMatches =
             luserMatches.where((e) => e.status != 'notstarted').toList();
         _userPlayers = luserPlayers;

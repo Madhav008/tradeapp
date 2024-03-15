@@ -23,6 +23,11 @@ class Match {
   Map<String, dynamic> toJson() => {
         "matches": List<dynamic>.from(matches.map((x) => x.toJson())),
       };
+
+  // Method to sort matches based on start date
+  void sortMatchesByStartDate() {
+    matches.sort((a, b) => a.startDate.compareTo(b.startDate));
+  }
 }
 
 class MatchElement {

@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         Scorecard.routeName: (context) => Scorecard(),
       },
       home: status == AuthStatus.uninitialized
-          ? Scaffold(body: Center(child: CircularProgressIndicator()))
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : status == AuthStatus.authenticated
               ? MyHomePage()
               : const SignIn(),

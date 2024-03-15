@@ -70,35 +70,34 @@ class AuthAPI extends ChangeNotifier {
     }
   }
 
-  createUser({
-    required String email,
-    required String password,
-    required String name,
-  }) async {
-    try {
-      final response = await _dio.post(
-        REGISTER_ENDPOINT,
-        data: {
-          'email': email,
-          'password': password,
-          'username': name,
-        },
-      );
-      final user = User.fromJson(response.data);
-      // print(response.data);
-      _currentUser = user;
-      _status = AuthStatus.authenticated;
-      notifyListeners();
+createUser({
+  required String email,
+  required String password,
+  required String name,
+}) async {
+  try {
+    final response = await _dio.post(
+      REGISTER_ENDPOINT,
+      data: {
+        'email': email,
+        'password': password,
+        'username': name,
+      },
+    );
+    final user = User.fromJson(response.data);
+    _currentUser = user;
+    _status = AuthStatus.authenticated;
 
-      // Save token to SharedPreferences
-      await _prefs.setString('token', user.token);
-    } catch (e) {
-      _status = AuthStatus.unauthenticated;
-      rethrow;
-    } finally {
-      notifyListeners();
-    }
+    await _prefs.setString('token', user.token);
+    // Save token to SharedPreferences
+  } catch (e) {
+    _status = AuthStatus.unauthenticated;
+    rethrow;
+  } finally {
+    notifyListeners();
   }
+}
+
 
   Future<void> login({required String email, required String password}) async {
     try {

@@ -9,6 +9,7 @@ import 'package:fanxange/pages/MatchListPage.dart';
 import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
+  static String routeName = '/homepage';
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
