@@ -41,11 +41,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final value = context.watch<AuthAPI>();
     final status = value.status;
-    
-    // final userid = AuthAPI.currentUser?.user.id;
-    // context.read<WalletProvider>().getWallet(userid);
-    // context.read<DatabaseAPI>().getUserOrder(userid);
-    // context.read<DatabaseAPI>().seprateMatchList();
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
