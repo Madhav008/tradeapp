@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,6 +17,13 @@ class WalletProvider with ChangeNotifier {
   bool get isTransactionLoading => _isTransactionLoading;
   bool get walletLoading => _isLoading;
   double get balance => _balance;
+
+  AuthAPI auth = AuthAPI();
+
+  WalletProvider() {
+    final userid = auth.userid;
+    getWallet(userid);
+  }
 
   getStringFromSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

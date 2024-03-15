@@ -43,10 +43,10 @@
 #   Bug
     [] Login Bug => After register when user login not work
     [] Register Bug => not navigating to Homepage
-    [] Throw error when order balance is not there
-    [] When login getting the exception regarding the matches and wallet
-    [] When creating the order portfolio not updating
 
+    [*] Throw error when order balance is not there
+    [*] When login getting the exception regarding the matches and wallet
+    [*] When creating the order portfolio not updating
     [*] Loading not implemented in points page
     [*] Loading not implemented in the orders page
     [*] Wallet Bug => int not able to convert into double
