@@ -109,10 +109,11 @@ class DatabaseAPI with ChangeNotifier {
     _instance ??= DatabaseAPI._internal();
     return _instance!;
   }
-
+  AuthAPI auth = AuthAPI();
   init() {
     seprateMatchList();
     getPlatformFees();
+    getUserOrder(auth.userid);
   }
 
   getStringFromSharedPreferences() async {

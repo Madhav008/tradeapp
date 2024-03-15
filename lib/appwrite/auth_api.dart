@@ -11,6 +11,16 @@ enum AuthStatus {
 }
 
 class AuthAPI extends ChangeNotifier {
+  static final AuthAPI _authAPI = AuthAPI._internal();
+
+  factory AuthAPI() {
+    return _authAPI;
+  }
+
+  AuthAPI._internal() {
+    init();
+  }
+
   final Dio _dio = Dio();
   AuthStatus _status = AuthStatus.uninitialized;
   static User? _currentUser;
@@ -21,10 +31,6 @@ class AuthAPI extends ChangeNotifier {
   String? get username => _currentUser?.user.displayName;
   String? get email => _currentUser?.user.email;
   String? get userid => _currentUser?.user.id;
-
-  AuthAPI() {
-    init();
-  }
 
   init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -47,8 +53,6 @@ class AuthAPI extends ChangeNotifier {
           _status = AuthStatus.authenticated;
           _currentUser = User.fromJson(response.data);
           notifyListeners();
-          // await WalletProvider().getWallet(_currentUser?.user?.id);
-          // await DatabaseAPI().getUserOrder(_currentUser?.user?.id);
         } else {
           _status = AuthStatus.unauthenticated;
           notifyListeners();
