@@ -1,4 +1,5 @@
 // ignore_for_file: file_names, prefer_const_constructors, use_build_context_synchronously
+import 'package:fanxange/pages/ForgetPage.dart';
 import 'package:fanxange/pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -210,47 +211,69 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget passwordTextField(Size size) {
-    return Container(
-      alignment: Alignment.center,
-      height: size.height / 15,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          width: 1.0,
-          color: const Color(0xFFEFEFEF),
-        ),
-      ),
-      child: TextField(
-        obscureText: passwordVisible,
-        controller: passwordController,
-        style: GoogleFonts.inter(
-          fontSize: 16.0,
-          color: const Color(0xFF15224F),
-        ),
-        maxLines: 1,
-        // obscureText: true,
-        keyboardType: TextInputType.visiblePassword,
-        cursorColor: const Color(0xFF15224F),
-        decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: Icon(
-                  passwordVisible ? Icons.visibility : Icons.visibility_off),
-              onPressed: () {
-                setState(
-                  () {
-                    passwordVisible = !passwordVisible;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          alignment: Alignment.center,
+          height: size.height / 15,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              width: 1.0,
+              color: const Color(0xFFEFEFEF),
+            ),
+          ),
+          child: TextField(
+            obscureText: passwordVisible,
+            controller: passwordController,
+            style: GoogleFonts.inter(
+              fontSize: 16.0,
+              color: const Color(0xFF15224F),
+            ),
+            maxLines: 1,
+            // obscureText: true,
+            keyboardType: TextInputType.visiblePassword,
+            cursorColor: const Color(0xFF15224F),
+            decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(passwordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                  onPressed: () {
+                    setState(
+                      () {
+                        passwordVisible = !passwordVisible;
+                      },
+                    );
                   },
-                );
-              },
+                ),
+                labelText: 'Password',
+                labelStyle: GoogleFonts.inter(
+                  fontSize: 12.0,
+                  color: const Color(0xFF969AA8),
+                ),
+                border: InputBorder.none),
+          ),
+        ),
+        GestureDetector(
+          onTap: () =>
+              Navigator.pushNamed(context, ForgetPasswordPage.routeName),
+          child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text(
+                'Forget Password',
+                style: TextStyle(
+                  color: const Color(0xFF21899C),
+                ),
+              ),
             ),
-            labelText: 'Password',
-            labelStyle: GoogleFonts.inter(
-              fontSize: 12.0,
-              color: const Color(0xFF969AA8),
-            ),
-            border: InputBorder.none),
-      ),
+          ),
+        )
+      ],
     );
   }
 

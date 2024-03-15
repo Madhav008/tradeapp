@@ -1,8 +1,10 @@
 import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
+import 'package:fanxange/pages/ForgetPage.dart';
 import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:fanxange/pages/ScorecardPage.dart';
+import 'package:fanxange/pages/Verification.dart';
 import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
@@ -51,6 +53,8 @@ class MyApp extends StatelessWidget {
       routes: {
         Onboarding.routeName: (context) => const Onboarding(),
         SignIn.routeName: (context) => const SignIn(),
+        ForgetPasswordPage.routeName: (context) => const ForgetPasswordPage(),
+        VerificationScreen.routeName: (context) => VerificationScreen(),
         SignUp.routeName: (context) => const SignUp(),
         NotificationPage.routeName: (context) => const NotificationPage(),
         PlayerPrice.routeName: (context) => const PlayerPrice(),
