@@ -148,7 +148,7 @@ class DatabaseAPI with ChangeNotifier {
       );
 
       _startedMatches = Match.fromJson(liveResponse.data);
-
+      print(_startedMatches?.matches.length);
       // Fetch completed matches
       Response<dynamic> completedResponse = await dio.get(
         MATCH_RESULT, // Replace with your API endpoint

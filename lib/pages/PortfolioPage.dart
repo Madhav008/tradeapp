@@ -8,6 +8,7 @@ import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/Notification.dart';
 import 'package:fanxange/components/MatchListTile.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class PortfolioPage extends StatelessWidget {
@@ -16,6 +17,8 @@ class PortfolioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
+    final authAPI = context.watch<AuthAPI>();
+
     return DefaultTabController(
       length: 2, // Number of tabs
       child: Scaffold(
@@ -38,7 +41,8 @@ class PortfolioPage extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () async {
         // Add logic to fetch updated data
-        databaseAPI.getUserOrder(databaseAPI.userid);
+        final userid = AuthAPI().userid;
+        databaseAPI.getUserOrder(userid);
       },
       child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,
@@ -62,7 +66,8 @@ class PortfolioPage extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () async {
         // Add logic to fetch updated data
-        databaseAPI.getUserOrder(databaseAPI.userid);
+        final userid = AuthAPI().userid;
+        databaseAPI.getUserOrder(userid);
       },
       child: Skeletonizer(
         enabled: databaseAPI.isMatchLoading,

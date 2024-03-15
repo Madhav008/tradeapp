@@ -6,6 +6,7 @@ import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/components/PlayerListTile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class Scorecard extends StatelessWidget {
   static String routeName = "/scorecard";
@@ -46,37 +47,40 @@ class Scorecard extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: performanceApi.matchPerformance.data?.length,
-              itemBuilder: (BuildContext context, int index) {
-                var playerData = performanceApi.matchPerformance.data?[index];
-                var teamname = '';
+            child: Skeletonizer(
+              enabled: performanceApi.isMatchPerformanceLoading,
+              child: ListView.builder(
+                itemCount: performanceApi.matchPerformance.data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var playerData = performanceApi.matchPerformance.data?[index];
+                  var teamname = '';
 
-                if (playerData?.team == 'team1') {
-                  teamname = databaseAPI.matchdata.team1Display;
-                } else {
-                  teamname = databaseAPI.matchdata.team2Display;
-                }
-                Player player = Player(
-                    matchkey: playerData!.matchId,
-                    playerkey: playerData.playerId,
-                    buyRate: '0',
-                    image: playerData.playerimage,
-                    isDisableBuy: false,
-                    isDisableSell: false,
-                    isPremium: '0',
-                    name: playerData.player_name,
-                    playerRate: '0',
-                    role: playerData.role,
-                    sellRate: '0',
-                    team: playerData.team,
-                    teamname: teamname);
-                return PlayerListTile(
-                  playersdata: player,
-                  showButtons: false,
-                  points: playerData.totalPoints.point.toString(),
-                );
-              },
+                  if (playerData?.team == 'team1') {
+                    teamname = databaseAPI.matchdata.team1Display;
+                  } else {
+                    teamname = databaseAPI.matchdata.team2Display;
+                  }
+                  Player player = Player(
+                      matchkey: playerData!.matchId,
+                      playerkey: playerData.playerId,
+                      buyRate: '0',
+                      image: playerData.playerimage,
+                      isDisableBuy: false,
+                      isDisableSell: false,
+                      isPremium: '0',
+                      name: playerData.player_name,
+                      playerRate: '0',
+                      role: playerData.role,
+                      sellRate: '0',
+                      team: playerData.team,
+                      teamname: teamname);
+                  return PlayerListTile(
+                    playersdata: player,
+                    showButtons: false,
+                    points: playerData.totalPoints.point.toString(),
+                  );
+                },
+              ),
             ),
           ),
         ],

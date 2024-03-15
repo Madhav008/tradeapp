@@ -1,4 +1,5 @@
 import 'package:fanxange/Model/MatchesModel.dart';
+import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class MatchListTile extends StatelessWidget {
           databaseAPI.setMatchData(matchdata);
           if (databaseAPI.isPortfolio) {
             Navigator.pushNamed(context, PlayersOrdersPage.routeName);
+            context.read<DatabaseAPI>().getUserOrder(AuthAPI().userid);
           } else {
             Navigator.pushNamed(context, PlayerPrice.routeName);
           }

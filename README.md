@@ -24,6 +24,10 @@
         [*] Sort according the players
         [*] Show the orders
         [*] Show No Orders present
+    [*] Create the Points system page
+    [*] Show the Points for each player
+    [*] Show the Detailed Points for the Player for specific match
+    [*] Show the multiple orders for each player 
     [] Profile
         [] Made the UI Page
         [] Update the required filed
@@ -31,20 +35,19 @@
         [] Implement the verification
         [] Implement the google auth
         [] Implement the kyc verification
-    [] Create the Points system page
-    [] Show the Points for each player
-    [] Show the Detailed Points for the Player for specific match
-    [] Show the multiple orders for each player 
-    []  Notification
+    [] Forget Password
+    [] Notification
+    [] Add the net profit in the wallet
 
     
 #   Bug
     [] Login Bug => After register when user login not work
     [] Register Bug => not navigating to Homepage
     [] Throw error when order balance is not there
+    [] When login getting the exception regarding the matches and wallet
+    [] When creating the order portfolio not updating
+
+    [*] Loading not implemented in points page
+    [*] Loading not implemented in the orders page
     [*] Wallet Bug => int not able to convert into double
     [*] Remove the padding from the wallet container
-
-#   Funtions
-    
-    

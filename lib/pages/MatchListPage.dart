@@ -37,7 +37,8 @@ class MatchListPage extends StatelessWidget {
       onRefresh: () async {
         databaseAPI.seprateMatchList();
       },
-      child: databaseAPI.notStartedMatches == null
+      child: databaseAPI.notStartedMatches == null ||
+              databaseAPI.notStartedMatches?.matches.length == 0
           ? const Center(
               child: Text("No Upcoming Matches"),
             )
@@ -64,7 +65,8 @@ class MatchListPage extends StatelessWidget {
           databaseAPI.seprateMatchList();
         });
       },
-      child: databaseAPI.startedMatches == null
+      child: databaseAPI.startedMatches == null ||
+              databaseAPI.startedMatches?.matches.length == 0
           ? const Center(
               child: Text("No Live Matches"),
             )
@@ -89,7 +91,8 @@ class MatchListPage extends StatelessWidget {
           databaseAPI.seprateMatchList();
         });
       },
-      child: databaseAPI.completedMatches == null
+      child: databaseAPI.completedMatches == null ||
+              databaseAPI.completedMatches?.matches.length == 0
           ? const Center(
               child: Text("No Completed Matches"),
             )
