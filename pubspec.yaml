@@ -7,7 +7,6 @@ environment:
   sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
-  appwrite: ^11.0.1
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.9
@@ -20,6 +19,10 @@ dependencies:
   syncfusion_flutter_charts: ^24.2.3+1
   chart_sparkline: ^1.0.15+1
   dio: ^5.4.0
+  flutter_countdown_timer: ^4.1.0
+  skeletonizer: ^1.1.0
+  fluttertoast: ^8.2.4
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:

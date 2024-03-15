@@ -16,7 +16,7 @@ class SignInSocialButton extends StatelessWidget {
   Widget build(BuildContext context) {
     signInProvider() async {
       final AuthAPI appwrite = context.read<AuthAPI>();
-      await appwrite.signInWithProvider(provider: 'google');
+      // await appwrite.signInWithProvider(provider: 'google');
     }
 
     return GestureDetector(

@@ -1,21 +1,43 @@
-// ignore: duplicate_ignore
-// ignore: constant_identifier_names
-// ignore_for_file: constant_identifier_names, duplicate_ignore
+// ignore_for_file: constant_identifier_names
 
-const String APPWRITE_PROJECT_ID = "65b1249d13bbc73d76c9";
-// ignore: constant_identifier_names
-const String APPWRITE_URL = "https://appwrite.fanxange.live/v1";
-// const String APPWRITE_URL = "http://192.168.1.123:4999/v1";
+const String API_URL = "https://test.fanxange.live";
+// const String API_URL = "http://192.168.1.66:3132";
 
-// ignore: constant_identifier_names
-const String APPWRITE_DATABASE_ID = "fanxange";
-const String COLLECTION_stocks = "stocks";
-const String COLLECTION_transactions = "transactions";
-const String COLLECTION_orderook = "orderook";
-const String COLLECTION_orders = "orders";
-const String COLLECTION_wallet = "wallet";
-const String COLLECTION_IPO = "IPOCollection";
-const String COLLECTION_IPOGRAPH = "IpoGraph";
+const String USER_PROFILE_ENDPOINT = '$API_URL/auth/user';
+const String REGISTER_ENDPOINT = '$API_URL/auth/register';
+const String LOGIN_ENDPOINT = '$API_URL/auth/login';
+
+const String MATCH_UPCOMING = '$API_URL/match/upcomming';
+const String MATCH_LIVE = '$API_URL/match/live';
+const String MATCH_RESULT = '$API_URL/match/result';
+
+const String PLAYER_ENDPOINT = '$API_URL/player';
+
+const String FEES_ENDPOINT = '$API_URL/fees';
+
+const String CREATE_WALLET_ENDPOINT = '$API_URL/wallet/createwallet';
+const String GET_WALLET_ENDPOINT = '$API_URL/wallet/getbalance';
+const String DEPOSIT_ENDPOINT = '$API_URL/wallet/deposit';
+const String WITHDRAW_ENDPOINT = '$API_URL/wallet/withdraw';
+
+const String TRANSACTION_ENDPOINT = '$API_URL/wallet/getusertransactions';
+
+const String CREATE_ORDER_ENDPOINT = '$API_URL/order/create';
+const String GETUSERR_ORDER_ENDPOINT = '$API_URL/order';
+
+const String GET_MATCH_STATS_ENDPOINT = '$API_URL/performance/match';
+
+
+
+
+
+
+
+
+
+
+
+
 // const int primaryColor = "0xFFE5F64A";
 // const int secondryColor = "0xFFF76961";
 // const int succesColor ="0xFF50CD89";

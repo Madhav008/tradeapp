@@ -1,6 +1,4 @@
 // ignore_for_file: file_names, prefer_const_constructors, use_build_context_synchronously
-
-import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -113,14 +111,14 @@ class _SignInState extends State<SignIn> {
 
     try {
       final AuthAPI appwrite = context.read<AuthAPI>();
-      await appwrite.createEmailSession(
+      await appwrite.login(
         email: emailController.text,
         password: passwordController.text,
       );
       Navigator.pop(context);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       Navigator.pop(context);
-      showAlert(title: 'Login failed', text: e.message.toString());
+      showAlert(title: 'Login failed', text: e.toString());
     }
   }
 
@@ -161,13 +159,13 @@ class _SignInState extends State<SignIn> {
         ),
         children: const [
           TextSpan(
-            text: 'IPO ',
+            text: 'Fan',
             style: TextStyle(
               fontWeight: FontWeight.w800,
             ),
           ),
           TextSpan(
-            text: 'PREMIUM ',
+            text: 'Xange ',
             style: TextStyle(
               color: Color(0xFFFE9879),
               fontWeight: FontWeight.w800,

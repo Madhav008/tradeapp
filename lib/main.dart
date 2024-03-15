@@ -1,12 +1,13 @@
+import 'package:fanxange/appwrite/performance_provider.dart';
+import 'package:fanxange/appwrite/wallet_provider.dart';
+import 'package:fanxange/pages/PlayerOrdersPage.dart';
+import 'package:fanxange/pages/PlayersPricePage.dart';
+import 'package:fanxange/pages/ScorecardPage.dart';
+import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
-import 'package:fanxange/pages/Dashboard.dart';
-import 'package:fanxange/pages/ExcutionPage.dart';
 import 'package:fanxange/pages/HomePage.dart';
-import 'package:fanxange/pages/IpoDetail.dart';
 import 'package:fanxange/pages/Notification.dart';
-import 'package:fanxange/pages/Orders.dart';
-import 'package:fanxange/pages/Search.dart';
 import 'package:fanxange/pages/SignIn.dart';
 import 'package:fanxange/pages/SignUp.dart';
 import 'package:fanxange/pages/onboarding.dart';
@@ -22,6 +23,12 @@ void main() {
       ChangeNotifierProvider(
         create: ((context) => DatabaseAPI()),
       ),
+      ChangeNotifierProvider(
+        create: ((context) => WalletProvider()),
+      ),
+      ChangeNotifierProvider(
+        create: ((context) => PerformanceProvider()),
+      ),
     ],
     child: const MyApp(),
   ));
@@ -32,7 +39,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final value = context.watch<AuthAPI>().status;
+    final value = context.watch<AuthAPI>();
+    final status = value.status;
+    
+    // final userid = AuthAPI.currentUser?.user.id;
+    // context.read<WalletProvider>().getWallet(userid);
+    // context.read<DatabaseAPI>().getUserOrder(userid);
+    // context.read<DatabaseAPI>().seprateMatchList();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -43,14 +57,17 @@ class MyApp extends StatelessWidget {
         Onboarding.routeName: (context) => const Onboarding(),
         SignIn.routeName: (context) => const SignIn(),
         SignUp.routeName: (context) => const SignUp(),
-        Dashboard.routeName: (context) => const Dashboard(),
         NotificationPage.routeName: (context) => const NotificationPage(),
-        SearchPage.routeName: (context) => const SearchPage(),
-        OrdersPage.routeName: (context) => const OrdersPage(),
-        IPODetailPage.routeName: (context) => IPODetailPage(),
-        ExecutionPage.routeName: (context) => ExecutionPage(),
+        PlayerPrice.routeName: (context) => const PlayerPrice(),
+        PlayersOrdersPage.routeName: (context) => const PlayersOrdersPage(),
+        WalletPage.routeName: (context) => WalletPage(),
+        Scorecard.routeName: (context) => Scorecard(),
       },
-      home: value == AuthStatus.authenticated ? MyHomePage() : const SignIn(),
+      home: status == AuthStatus.uninitialized
+          ? Scaffold(body: Center(child: CircularProgressIndicator()))
+          : status == AuthStatus.authenticated
+              ? MyHomePage()
+              : const SignIn(),
     );
   }
 }
