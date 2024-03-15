@@ -12,9 +12,15 @@ class PlayerListTile extends StatelessWidget {
   const PlayerListTile({
     Key? key,
     required this.playersdata,
+    this.showButtons = true,
+    this.points = '', // Add a new parameter with a default value of true
+    // Add a new parameter with a default value of true
   }) : super(key: key);
 
   final Player? playersdata;
+  final bool showButtons;
+  final String points; // New parameter to control button visibility
+  // New parameter to control button visibility
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +98,15 @@ class PlayerListTile extends StatelessWidget {
                     ],
                   ),
                 ),
+                (!showButtons)
+                    ? Padding(
+                        padding:
+                            EdgeInsets.only(top: 20, bottom: 10, right: 20),
+                        child: Text(
+                          points,
+                          style: TextStyle(fontSize: 18),
+                        ))
+                    : SizedBox(),
               ],
             ),
           ),
@@ -119,76 +134,81 @@ class PlayerListTile extends StatelessWidget {
           //     ),
           //   ],
           // ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () {
-                  final rate = int.parse(playersdata!.buyRate);
 
-                  databaseApi.setOrderType("buy");
-                  databaseApi.setPlayerPrice(
-                      double.tryParse(playersdata?.buyRate ?? '0') ?? 0);
-                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
-                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
-                  databaseApi.setTeamId(playersdata?.teamname);
-                  databaseApi.setUserId(authApi.userid);
-                  databaseApi.clearOrder();
-                  _showPlayerDetailsModal(context, "buy");
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(
-                        254, 152, 121, 0.8), // Adjusted opacity for Buy button
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    "Buy: ₹${playersdata?.buyRate.toString() ?? ''}",
-                    style: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      fontSize: 14,
+          showButtons
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        final rate = int.parse(playersdata!.buyRate);
+
+                        databaseApi.setOrderType("buy");
+                        databaseApi.setPlayerPrice(
+                            double.tryParse(playersdata?.buyRate ?? '0') ?? 0);
+                        databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                        databaseApi
+                            .setPlayerId(playersdata?.playerkey.toString());
+                        databaseApi.setTeamId(playersdata?.teamname);
+                        databaseApi.setUserId(authApi.userid);
+                        databaseApi.clearOrder();
+                        _showPlayerDetailsModal(context, "buy");
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(254, 152, 121,
+                              0.8), // Adjusted opacity for Buy button
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          "Buy: ₹${playersdata?.buyRate.toString() ?? ''}",
+                          style: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  databaseApi.setOrderType("sell");
-                  databaseApi.setPlayerPrice(
-                      double.tryParse(playersdata?.sellRate ?? '0') ?? 0);
-                  databaseApi.setUserId(authApi.userid);
-                  databaseApi.setMatchId(databaseApi.matchdata.matchkey);
-                  databaseApi.setPlayerId(playersdata?.playerkey.toString());
-                  databaseApi.setTeamId(playersdata?.teamname);
-                  databaseApi.clearOrder();
-                  _showPlayerDetailsModal(context, "sell");
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Color(
-                        0xFF21899C), // Transparent background for Sell button
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                        color: const Color(
-                            0xFF21899C)), // Optional border for visibility
-                  ),
-                  child: Text(
-                    "Sell: ₹${playersdata?.sellRate.toString() ?? ''}",
-                    style: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      fontSize: 14,
+                    InkWell(
+                      onTap: () {
+                        databaseApi.setOrderType("sell");
+                        databaseApi.setPlayerPrice(
+                            double.tryParse(playersdata?.sellRate ?? '0') ?? 0);
+                        databaseApi.setUserId(authApi.userid);
+                        databaseApi.setMatchId(databaseApi.matchdata.matchkey);
+                        databaseApi
+                            .setPlayerId(playersdata?.playerkey.toString());
+                        databaseApi.setTeamId(playersdata?.teamname);
+                        databaseApi.clearOrder();
+                        _showPlayerDetailsModal(context, "sell");
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Color(
+                              0xFF21899C), // Transparent background for Sell button
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                              color: const Color(
+                                  0xFF21899C)), // Optional border for visibility
+                        ),
+                        child: Text(
+                          "Sell: ₹${playersdata?.sellRate.toString() ?? ''}",
+                          style: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ],
-          )
+                  ],
+                )
+              : SizedBox()
         ],
       ),
     );

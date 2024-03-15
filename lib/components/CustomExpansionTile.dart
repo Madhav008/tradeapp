@@ -47,14 +47,14 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
               title: Text(
                 actionText,
                 style: GoogleFonts.openSans(
-                  fontSize: 13,
+                  fontSize: 14,
                   textStyle: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               subtitle: Text(
                 widget.subtitle,
                 style: GoogleFonts.openSans(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: Colors.blueGrey,
                     fontWeight: FontWeight.bold),
               ),
@@ -65,7 +65,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
                       ? Text(
                           "-₹" + widget.trailingText,
                           style: GoogleFonts.openSans(
-                              fontSize: 13,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: widget.type == 'debit'
                                   ? Colors.blue
@@ -74,7 +74,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
                       : Text(
                           "+₹" + widget.trailingText,
                           style: GoogleFonts.openSans(
-                              fontSize: 13,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: widget.type == 'debit'
                                   ? Colors.blue

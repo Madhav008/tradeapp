@@ -1,8 +1,9 @@
 // ignore_for_file: file_names
-
 import 'package:fanxange/appwrite/database_api.dart';
+import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/components/PlayerOrderTile.dart';
 import 'package:fanxange/pages/Notification.dart';
+import 'package:fanxange/pages/ScorecardPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,8 @@ class PlayersOrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final databaseAPI = context.watch<DatabaseAPI>();
+    final matchkey = databaseAPI.matchdata.matchkey;
+    context.read<PerformanceProvider>().getMatchPerformance(matchkey);
     // databaseAPI.setUpcomingList();
     return DefaultTabController(
       length: 3, // Number of tabs
@@ -24,7 +27,7 @@ class PlayersOrdersPage extends StatelessWidget {
         appBar: ExtendedAppBar(),
         body: TabBarView(
           children: [
-            _allPlayers(databaseAPI),
+            _allPlayers(databaseAPI, context),
             _teamA(databaseAPI),
             _teamB(databaseAPI), // Adjust as needed
           ],
@@ -33,7 +36,21 @@ class PlayersOrdersPage extends StatelessWidget {
     );
   }
 
-  Skeletonizer _allPlayers(DatabaseAPI databaseAPI) {
+  Skeletonizer _allPlayers(DatabaseAPI databaseAPI, context) {
+    final status = databaseAPI.matchdata.status;
+    final matchOrders = databaseAPI.userOrdersList
+        ?.where((element) => element.matchid == databaseAPI.matchdata.matchkey)
+        .toList();
+
+    final totalInvested = matchOrders
+        ?.map((element) => element.total_amount)
+        .reduce((value, element) => (value ?? 0) + (element ?? 0));
+
+    final totalWinning = matchOrders
+        ?.map((e) => e.profit)
+        .reduce((val, e) => (val ?? 0) + (e ?? 0));
+
+    final netProfit = totalWinning! - totalInvested!;
     return Skeletonizer(
       enabled: databaseAPI.isPlayerLoading,
       child: RefreshIndicator(
@@ -42,14 +59,82 @@ class PlayersOrdersPage extends StatelessWidget {
             databaseAPI.getPlayersData();
           });
         },
-        child: ListView.builder(
-          // shrinkWrap: true,
-          itemCount: databaseAPI.playersdata?.length,
-          itemBuilder: (context, index) {
-            var ipodata = databaseAPI.playersdata?[index];
-            return PlayerOrderTile(playersdata: ipodata);
-          },
-        ),
+        child: status == 'completed'
+            ? Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, Scorecard.routeName);
+                      },
+                      child: Container(
+                        height: 20,
+                        width: double.infinity,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(
+                                "All Players Stats ",
+                                style: TextStyle(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Icon(Icons.arrow_right)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildListItem(
+                            Icons.circle,
+                            Colors.red,
+                            "Total Investment:",
+                            totalInvested.toStringAsFixed(2)),
+                        _buildListItem(Icons.circle, Colors.blue,
+                            "Total Winning: ", totalWinning.toStringAsFixed(2)),
+                        _buildListItem(Icons.circle, Colors.green,
+                            "Net Profit: ", netProfit.toStringAsFixed(2)),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.blueGrey,
+                    thickness: 0.15,
+                    height: 2,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      // shrinkWrap: true,
+                      itemCount: databaseAPI.playersdata?.length,
+                      itemBuilder: (context, index) {
+                        var ipodata = databaseAPI.playersdata?[index];
+                        return PlayerOrderTile(playersdata: ipodata);
+                      },
+                    ),
+                  ),
+                ],
+              )
+            : ListView.builder(
+                // shrinkWrap: true,
+                itemCount: databaseAPI.playersdata?.length,
+                itemBuilder: (context, index) {
+                  var ipodata = databaseAPI.playersdata?[index];
+                  return PlayerOrderTile(playersdata: ipodata);
+                },
+              ),
       ),
     );
   }
@@ -230,5 +315,31 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      Size.fromHeight(200.0); // Set your desired height here
+      Size.fromHeight(180.0); // Set your desired height here
+}
+
+Widget _buildListItem(IconData icon, Color color, String text, String amount) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Icon(icon, size: 12, color: color),
+          SizedBox(width: 5),
+          Text(
+            text,
+            style: TextStyle(fontSize: 14.5),
+          ),
+        ],
+      ),
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Text(
+          amount,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      )
+    ],
+  );
 }

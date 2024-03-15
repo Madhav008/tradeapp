@@ -16,7 +16,9 @@ class PlayerOrderTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final databaseApi = context.watch<DatabaseAPI>();
     final playerOrders = databaseApi.userOrdersList
-        ?.where((order) => order.playerid == playersdata?.playerkey)
+        ?.where((order) =>
+            order.playerid == playersdata?.playerkey &&
+            order.matchid == databaseApi.matchdata.matchkey)
         .toList();
 
     return Column(
@@ -25,7 +27,8 @@ class PlayerOrderTile extends StatelessWidget {
             double totalPrice = order.total_amount;
             String orderType = order.order_type
                 .toUpperCase(); // Assuming orderType is a property in your Order model
-
+            int points = order.player_point;
+            double profit = order.profit;
             Color orderColor = orderType == 'BUY' ? Colors.green : Colors.red;
 
             return Padding(
@@ -149,6 +152,44 @@ class PlayerOrderTile extends StatelessWidget {
                                   ),
                                   Text(
                                     '₹ ${totalPrice.toStringAsFixed(2)}',
+                                    style: GoogleFonts.openSans(
+                                        fontSize: 14,
+                                        height: 1.2,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Points: ',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 14,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${points.toStringAsFixed(2)}',
+                                    style: GoogleFonts.openSans(
+                                        fontSize: 14,
+                                        height: 1.2,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Total Return: ',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 14,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  Text(
+                                    '₹ ${profit.toStringAsFixed(2)}',
                                     style: GoogleFonts.openSans(
                                         fontSize: 14,
                                         height: 1.2,

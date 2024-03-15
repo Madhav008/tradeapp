@@ -354,6 +354,8 @@ class DatabaseAPI with ChangeNotifier {
           matchid: matchdata.matchkey,
           playerid: _playerid,
           teamid: _teamid,
+          profit: 0.00,
+          player_point: 0,
           walletId: userid);
       await createOrderHelper(myOrder);
       clearOrder();
@@ -483,32 +485,38 @@ class Order {
   final int shares;
   final String timestamp;
   final double total_amount;
+  final double profit;
   final String? userid;
   final double platformFees;
   final String? playerid;
   final String? matchid;
   final String? teamid;
   final String? walletId;
+  final int player_point;
 
   // Updated constructor to include all fields
-  Order(
-      {required this.player_price,
-      required this.order_type,
-      required this.shares,
-      required this.timestamp,
-      required this.total_amount,
-      required this.userid,
-      required this.platformFees,
-      required this.playerid,
-      required this.matchid,
-      required this.teamid,
-      required this.walletId});
+  Order({
+    required this.player_price,
+    required this.order_type,
+    required this.shares,
+    required this.timestamp,
+    required this.total_amount,
+    required this.profit,
+    required this.userid,
+    required this.platformFees,
+    required this.playerid,
+    required this.matchid,
+    required this.teamid,
+    required this.walletId,
+    required this.player_point,
+  });
 
   // Factory constructor to create an Order instance from a Map
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
       player_price: (json['price'] as num).toDouble(), // Convert to double
       total_amount: (json['amount'] as num).toDouble(), // Convert to double
+      profit: (json['profit'] as num).toDouble(),
       shares: json['qty'] ?? 0,
       userid: json['user'] ?? '',
       order_type: json['orderType'] ?? '',
@@ -516,6 +524,7 @@ class Order {
       matchid: json['matchId'] ?? '',
       teamid: json['teamId'] ?? '',
       timestamp: json['timestamp'] ?? '',
+      player_point: json['player_point'] ?? '',
       platformFees: 0.00,
       walletId: '',
     );
@@ -529,12 +538,14 @@ class Order {
       'qty': shares,
       'timestamp': timestamp,
       'amount': total_amount,
+      'profit': profit,
       'user': userid,
       'platformFees': platformFees,
       'playerId': playerid,
       'matchId': matchid,
       'teamId': teamid,
-      'walletId': walletId
+      'walletId': walletId,
+      'player_point': player_point
     };
   }
 }

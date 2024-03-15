@@ -1,6 +1,8 @@
+import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
+import 'package:fanxange/pages/ScorecardPage.dart';
 import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/database_api.dart';
@@ -23,6 +25,9 @@ void main() {
       ),
       ChangeNotifierProvider(
         create: ((context) => WalletProvider()),
+      ),
+      ChangeNotifierProvider(
+        create: ((context) => PerformanceProvider()),
       ),
     ],
     child: const MyApp(),
@@ -56,6 +61,7 @@ class MyApp extends StatelessWidget {
         PlayerPrice.routeName: (context) => const PlayerPrice(),
         PlayersOrdersPage.routeName: (context) => const PlayersOrdersPage(),
         WalletPage.routeName: (context) => WalletPage(),
+        Scorecard.routeName: (context) => Scorecard(),
       },
       home: status == AuthStatus.uninitialized
           ? Scaffold(body: Center(child: CircularProgressIndicator()))

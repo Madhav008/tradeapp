@@ -141,8 +141,8 @@ class PortfolioPage extends StatelessWidget {
       // Add the headline "Portfolio" to the AppBar
       bottom: const TabBar(
         tabs: [
-          Tab(text: 'Current Holding'),
-          Tab(text: 'Previous Holding'),
+          Tab(text: 'Current Orders'),
+          Tab(text: 'Previous Orders'),
         ],
       ),
     );
