@@ -56,13 +56,14 @@ class MyApp extends StatelessWidget {
         SignIn.routeName: (context) => const SignIn(),
         ForgetPasswordPage.routeName: (context) => const ForgetPasswordPage(),
         VerificationScreen.routeName: (context) => VerificationScreen(),
-        ChangePassPage.routeName: (context) => ChangePassPage(),
+        ChangePassPage.routeName: (context) => const ChangePassPage(),
         SignUp.routeName: (context) => const SignUp(),
         NotificationPage.routeName: (context) => const NotificationPage(),
         PlayerPrice.routeName: (context) => const PlayerPrice(),
         PlayersOrdersPage.routeName: (context) => const PlayersOrdersPage(),
         WalletPage.routeName: (context) => WalletPage(),
-        Scorecard.routeName: (context) => Scorecard(),
+        Scorecard.routeName: (context) => const Scorecard(),
+        MyHomePage.routeName: (context) => MyHomePage()
       },
       home: status == AuthStatus.uninitialized
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))

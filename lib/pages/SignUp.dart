@@ -1,12 +1,10 @@
-// ignore_for_file: file_names, prefer_const_constructors, unnecessary_const, use_build_context_synchronously
+import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/pages/HomePage.dart';
+import 'package:fanxange/pages/SignIn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fanxange/appwrite/auth_api.dart';
-import 'package:fanxange/pages/SignIn.dart';
 import 'package:provider/provider.dart';
-import '../components/social_button.dart';
 
 class SignUp extends StatefulWidget {
   static String routeName = "/signup";
@@ -26,6 +24,11 @@ class _SignUpState extends State<SignUp> {
   bool passwordVisible = true;
   bool confirmpasswordVisible = true;
 
+  String? nameError;
+  String? emailError;
+  String? passwordError;
+  String? confirmPasswordError;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +40,6 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(
@@ -47,102 +49,142 @@ class _SignUpState extends State<SignUp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  //logo section
-                  logo(size.height / 8, size.height / 8),
+                  SvgPicture.asset(
+                    'assets/svg/logo.svg',
+                    height: size.height / 8,
+                    width: size.height / 8,
+                  ),
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-                  richText(24),
+                  Text.rich(
+                    TextSpan(
+                      style: GoogleFonts.inter(
+                        fontSize: 24,
+                        color: const Color(0xFF21899C),
+                        letterSpacing: 3,
+                        height: 1.03,
+                      ),
+                      children: const [
+                        TextSpan(
+                          text: 'Fan',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Xange ',
+                          style: TextStyle(
+                            color: Color(0xFFFE9879),
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-
                   nameTextField(size),
+                  if (nameError != null)
+                    Text(
+                      nameError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   SizedBox(
                     height: size.height * 0.02,
                   ),
-                  //email & password section
                   emailTextField(size),
+                  if (emailError != null)
+                    Text(
+                      emailError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   SizedBox(
                     height: size.height * 0.02,
                   ),
                   passwordTextField(size),
+                  if (passwordError != null)
+                    Text(
+                      passwordError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-
-                  confirmpasswordTextField(size),
+                  confirmPasswordTextField(size),
+                  if (confirmPasswordError != null)
+                    Text(
+                      confirmPasswordError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-                  //sign in button & sign in with text
-                  signInButton(size, context),
+                  InkWell(
+                    onTap: createAccount,
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: size.height / 18,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50.0),
+                        color: const Color(0xFF21899C),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4C2E84).withOpacity(0.2),
+                            offset: const Offset(0, 15.0),
+                            blurRadius: 60.0,
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        'Sign Up',
+                        style: GoogleFonts.inter(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     height: size.height * 0.02,
                   ),
-                  signInWithText(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(child: Divider()),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Text(
+                        'Or Sign in with',
+                        style: GoogleFonts.inter(
+                          fontSize: 12.0,
+                          color: const Color(0xFF969AA8),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
                   SizedBox(
                     height: size.height * 0.02,
                   ),
-
-                  //sign in with google & apple
-                  // signInGoogleButton(size),
-                  SignInSocialButton(
-                    iconPath: 'assets/svg/google_logo.svg',
-                    text: 'Sign Up with Google',
-                  ),
-                  // signInAppleButton(size),
-                  SizedBox(
-                    height: size.height * 0.03,
-                  ),
-
-                  //sign up text here
-                  Center(
-                    child: footerText(context),
-                  )
+                  footerText(context),
                 ],
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget logo(double height_, double width_) {
-    return SvgPicture.asset(
-      'assets/svg/logo.svg',
-      height: height_,
-      width: width_,
-    );
-  }
-
-  Widget richText(double fontSize) {
-    return Text.rich(
-      TextSpan(
-        style: GoogleFonts.inter(
-          fontSize: fontSize,
-          color: const Color(0xFF21899C),
-          letterSpacing: 3,
-          height: 1.03,
-        ),
-        children: const [
-          TextSpan(
-            text: 'Fan',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          TextSpan(
-            text: 'Xange ',
-            style: TextStyle(
-              color: Color(0xFFFE9879),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-      textAlign: TextAlign.center,
     );
   }
 
@@ -167,12 +209,18 @@ class _SignUpState extends State<SignUp> {
         maxLines: 1,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
-            labelText: 'Full Name ',
-            labelStyle: GoogleFonts.inter(
-              fontSize: 12.0,
-              color: const Color(0xFF969AA8),
-            ),
-            border: InputBorder.none),
+          labelText: 'Full Name ',
+          labelStyle: GoogleFonts.inter(
+            fontSize: 12.0,
+            color: const Color(0xFF969AA8),
+          ),
+          border: InputBorder.none,
+        ),
+        onChanged: (_) {
+          setState(() {
+            nameError = null;
+          });
+        },
       ),
     );
   }
@@ -198,12 +246,18 @@ class _SignUpState extends State<SignUp> {
         maxLines: 1,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
-            labelText: 'Email/ Phone number',
-            labelStyle: GoogleFonts.inter(
-              fontSize: 12.0,
-              color: const Color(0xFF969AA8),
-            ),
-            border: InputBorder.none),
+          labelText: 'Email/ Phone number',
+          labelStyle: GoogleFonts.inter(
+            fontSize: 12.0,
+            color: const Color(0xFF969AA8),
+          ),
+          border: InputBorder.none,
+        ),
+        onChanged: (_) {
+          setState(() {
+            emailError = null;
+          });
+        },
       ),
     );
   }
@@ -228,32 +282,36 @@ class _SignUpState extends State<SignUp> {
           color: const Color(0xFF15224F),
         ),
         maxLines: 1,
-        // obscureText: true,
         keyboardType: TextInputType.visiblePassword,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: Icon(
-                  passwordVisible ? Icons.visibility : Icons.visibility_off),
-              onPressed: () {
-                setState(
-                  () {
-                    passwordVisible = !passwordVisible;
-                  },
-                );
-              },
+          suffixIcon: IconButton(
+            icon: Icon(
+              passwordVisible ? Icons.visibility : Icons.visibility_off,
             ),
-            labelText: 'Password',
-            labelStyle: GoogleFonts.inter(
-              fontSize: 12.0,
-              color: const Color(0xFF969AA8),
-            ),
-            border: InputBorder.none),
+            onPressed: () {
+              setState(() {
+                passwordVisible = !passwordVisible;
+              });
+            },
+          ),
+          labelText: 'Password',
+          labelStyle: GoogleFonts.inter(
+            fontSize: 12.0,
+            color: const Color(0xFF969AA8),
+          ),
+          border: InputBorder.none,
+        ),
+        onChanged: (_) {
+          setState(() {
+            passwordError = null;
+          });
+        },
       ),
     );
   }
 
-  Widget confirmpasswordTextField(Size size) {
+  Widget confirmPasswordTextField(Size size) {
     return Container(
       alignment: Alignment.center,
       height: size.height / 15,
@@ -273,139 +331,137 @@ class _SignUpState extends State<SignUp> {
           color: const Color(0xFF15224F),
         ),
         maxLines: 1,
-        // obscureText: true,
         keyboardType: TextInputType.visiblePassword,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: Icon(confirmpasswordVisible
-                  ? Icons.visibility
-                  : Icons.visibility_off),
-              onPressed: () {
-                setState(
-                  () {
-                    confirmpasswordVisible = !confirmpasswordVisible;
-                  },
-                );
-              },
+          suffixIcon: IconButton(
+            icon: Icon(
+              confirmpasswordVisible ? Icons.visibility : Icons.visibility_off,
             ),
-            labelText: 'Confirm Password',
-            labelStyle: GoogleFonts.inter(
-              fontSize: 12.0,
-              color: const Color(0xFF969AA8),
-            ),
-            border: InputBorder.none),
+            onPressed: () {
+              setState(() {
+                confirmpasswordVisible = !confirmpasswordVisible;
+              });
+            },
+          ),
+          labelText: 'Confirm Password',
+          labelStyle: GoogleFonts.inter(
+            fontSize: 12.0,
+            color: const Color(0xFF969AA8),
+          ),
+          border: InputBorder.none,
+        ),
+        onChanged: (_) {
+          setState(() {
+            confirmPasswordError = null;
+          });
+        },
       ),
     );
   }
 
   showAlert({required String title, required String text}) {
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(text),
-            actions: [
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Ok'))
-            ],
-          );
-        });
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(text),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   createAccount() async {
+    // Validate name
+    final String name = nameController.text.trim();
+    if (name.isEmpty) {
+      setState(() {
+        nameError = 'Please enter your name.';
+      });
+      return;
+    }
+
+    // Validate email format
+    final String email = emailController.text.trim();
+    final RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      setState(() {
+        emailError = 'Please enter a valid email address.';
+      });
+      return;
+    }
+
+    // Validate password strength
+    final String password = passwordController.text;
+    final RegExp passwordRegex =
+        RegExp(r'^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z])(?=.*\d).{6,}$');
+    if (!passwordRegex.hasMatch(password)) {
+      setState(() {
+        passwordError =
+            'Password must be at least 6 characters long and contain at least one special character.';
+      });
+      return;
+    }
+
+    // Validate password and confirm password match
+    final String confirmPassword = confirmPasswordController.text;
+    if (password != confirmPassword) {
+      setState(() {
+        confirmPasswordError = 'Passwords do not match.';
+      });
+      return;
+    }
+
+    // Perform account creation if all validations pass
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const Dialog(
-            backgroundColor: Colors.transparent,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
-                  const CircularProgressIndicator(),
-                ]),
-          );
-        });
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Dialog(
+          backgroundColor: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: const [
+              CircularProgressIndicator(),
+            ],
+          ),
+        );
+      },
+    );
     try {
       final AuthAPI appwrite = context.read<AuthAPI>();
-      await appwrite.createUser(
-          email: emailController.text,
-          password: passwordController.text,
-          name: nameController.text);
-      Navigator.pop(context);
-      const snackbar = SnackBar(content: Text('Account created!'));
-      Navigator.pushNamed(context, MyHomePage.routeName);
-      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      await appwrite
+          .createUser(
+        email: email,
+        password: password,
+        name: name,
+      )
+          .then((_) {
+        print("Before navigation");
+        Navigator.popAndPushNamed(context, MyHomePage.routeName);
+        print("After navigation");
+      });
+      // Navigator.pop(context); // Close the dialog
+      // const snackbar = SnackBar(content: Text('Account created!'));
+      // ScaffoldMessenger.of(context).showSnackBar(snackbar);
     } on Exception catch (e) {
       Navigator.pop(context);
-      showAlert(title: 'Account creation failed', text: e.toString());
+      showAlert(
+        title: 'Account creation failed',
+        text: e.toString(),
+      );
     }
   }
 
-  Widget signInButton(Size size, BuildContext ctx) {
-    return InkWell(
-      onTap: () {
-        createAccount();
-      },
-      child: Container(
-        alignment: Alignment.center,
-        height: size.height / 18,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50.0),
-          color: const Color(0xFF21899C),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF4C2E84).withOpacity(0.2),
-              offset: const Offset(0, 15.0),
-              blurRadius: 60.0,
-            ),
-          ],
-        ),
-        child: Text(
-          'Sign Up',
-          style: GoogleFonts.inter(
-            fontSize: 16.0,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            height: 1.5,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  Widget signInWithText() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Expanded(child: Divider()),
-        const SizedBox(
-          width: 16,
-        ),
-        Text(
-          'Or Sign in with',
-          style: GoogleFonts.inter(
-            fontSize: 12.0,
-            color: const Color(0xFF969AA8),
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(
-          width: 16,
-        ),
-        const Expanded(child: Divider()),
-      ],
-    );
-  }
-
-  //sign up text here
   Widget footerText(BuildContext context) {
     return InkWell(
       onTap: () {
