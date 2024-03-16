@@ -6,6 +6,9 @@ const String API_URL = "https://test.fanxange.live";
 const String USER_PROFILE_ENDPOINT = '$API_URL/auth/user';
 const String REGISTER_ENDPOINT = '$API_URL/auth/register';
 const String LOGIN_ENDPOINT = '$API_URL/auth/login';
+const String FORGET_ENDPOINT = '$API_URL/auth/forget';
+const String VERIFY_ENDPOINT = '$API_URL/auth/verify';
+const String RESET_ENDPOINT = '$API_URL/auth/reset';
 
 const String MATCH_UPCOMING = '$API_URL/match/upcomming';
 const String MATCH_LIVE = '$API_URL/match/live';

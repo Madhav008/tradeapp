@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/pages/Verification.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   static String routeName = '/forgetPass';
@@ -44,8 +47,26 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             emailTextField(size),
             SizedBox(height: 20),
             GestureDetector(
-                onTap: () =>
-                    Navigator.pushNamed(context, VerificationScreen.routeName),
+                onTap: () {
+                  String email = emailController.text;
+
+                  // Check if the email is empty
+                  if (email.isEmpty) {
+                    // Show Flutter toast indicating email is required
+                    Fluttertoast.showToast(
+                      msg: "Email is required",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                    );
+                    return; // Exit the function early if email is empty
+                  }
+
+                  // Proceed with password reset process
+                  context.read<AuthAPI>().forgetPass(email);
+                  Navigator.pushNamed(context, VerificationScreen.routeName);
+                },
                 child: Container(
                   alignment: Alignment.center,
                   height: size.height / 18,

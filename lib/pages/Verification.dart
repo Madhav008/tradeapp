@@ -1,13 +1,9 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables
+import 'dart:async';
+import 'package:fanxange/appwrite/auth_api.dart';
+import 'package:fanxange/pages/ChangePassPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-
-const Color primaryColor = Color(0xFF121212);
-const Color accentPurpleColor = Color(0xFF6A53A1);
-const Color accentPinkColor = Color(0xFFF99BBD);
-const Color accentDarkGreenColor = Color(0xFF21899C);
-const Color accentYellowColor = Color(0xFFFFB612);
-const Color accentOrangeColor = Color(0xFFEA7A3B);
+import 'package:provider/provider.dart';
 
 class VerificationScreen extends StatefulWidget {
   static String routeName = '/verification';
@@ -18,11 +14,63 @@ class VerificationScreen extends StatefulWidget {
 class _VerificationScreenState extends State<VerificationScreen> {
   late List<TextStyle?> otpTextStyles;
   late List<TextEditingController?> controls;
-  int numberOfFields = 5;
+  int numberOfFields = 4;
   bool clearText = false;
+  Timer? _timer;
+  int _start = 300; // 5 minutes in seconds
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  _onResendOTP() {
+    final authapi = context.read<AuthAPI>();
+    final email = authapi.forgetEmail;
+    print(email);
+    authapi.forgetPass(email);
+    _start = 300; // Reset the timer to 10 seconds (adjust as needed)
+    startTimer(); // Restart the timer
+    setState(() {
+      clearText = false; // Reset the clearText flag to false
+    });
+  }
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            _timer?.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
+  String get timerText {
+    int minutes = _start ~/ 60;
+    int seconds = _start % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authapi = context.watch<AuthAPI>();
+
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
@@ -49,7 +97,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             OtpTextField(
               numberOfFields: numberOfFields,
               borderColor: Color(0xFF512DA8),
-              focusedBorderColor: primaryColor,
+
               clearText: clearText,
               showFieldAsBox: true,
               textStyle: theme.textTheme.titleMedium,
@@ -66,81 +114,41 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   clearText = true;
                 });
                 //navigate to different screen code goes here
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text("Verification Code"),
-                      content: Text('Code entered is $verificationCode'),
-                    );
-                  },
-                );
+                context.read<AuthAPI>().verify(verificationCode).then((_) {
+                  if (context.read<AuthAPI>().isVerified!) {
+                    Navigator.popAndPushNamed(
+                        context, ChangePassPage.routeName);
+                  } else {
+                    // Handle if verification is not successful
+                  }
+                });
               }, // end onSubmit
             ),
             Spacer(),
-            Center(
-              child: Text(
-                "Didn't get code?",
-                style: theme.textTheme.subtitle1,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Didn't get the code?",
+                  style: theme.textTheme.subtitle1,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                _start == 0
+                    ? TextButton(
+                        onPressed: _onResendOTP, // Call _onResendOTP function
+                        child: Text("Resend OTP"),
+                      )
+                    : Text(
+                        "Resend in $timerText",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+              ],
             ),
             Spacer(flex: 3),
-            CustomButton(
-              onPressed: () {},
-              title: "Confirm",
-              color: accentDarkGreenColor,
-              textStyle: theme.textTheme.subtitle1?.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            Spacer(flex: 2),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CustomButton extends StatelessWidget {
-  CustomButton({
-    required this.title,
-    this.onPressed,
-    this.height = 60,
-    this.elevation = 1,
-    this.color = primaryColor,
-    this.textStyle,
-  });
-
-  final VoidCallback? onPressed;
-  final double height;
-  final double elevation;
-  final String title;
-  final Color color;
-
-  // final BorderSide borderSide;
-  final TextStyle? textStyle;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: onPressed,
-      elevation: elevation,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          bottomLeft: const Radius.circular(30.0),
-        ),
-      ),
-      height: height,
-      color: color,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: textStyle,
-          )
-        ],
       ),
     );
   }
