@@ -1,33 +1,45 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:fanxange/appwrite/auth_api.dart';
-import 'package:fanxange/pages/Verification.dart';
+import 'package:fanxange/components/CustomExpansionTile.dart';
+import 'package:fanxange/pages/PaymentPage.dart';
 import 'package:flutter/material.dart';
+import 'package:fanxange/appwrite/auth_api.dart';
+import 'package:fanxange/appwrite/wallet_provider.dart';
+import 'package:fanxange/pages/Notification.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:intl/intl.dart';
 
-class ForgetPasswordPage extends StatefulWidget {
-  static String routeName = '/forgetPass';
-
-  const ForgetPasswordPage({super.key});
+class PaymentPage extends StatefulWidget {
+  static String routeName = "/payment";
 
   @override
-  State<ForgetPasswordPage> createState() => _ForgetPasswordPageState();
+  _PaymentPageState createState() => _PaymentPageState();
 }
 
-class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
-  TextEditingController emailController = TextEditingController();
+class _PaymentPageState extends State<PaymentPage> {
+  @override
+  void initState() {
+    context.read<WalletProvider>().getWallet(context.read<AuthAPI>().userid);
+    super.initState();
+  }
 
+  TextEditingController amountController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final authApi = context.watch<AuthAPI>();
+    // Mock data for balances
+    final walletApi = context.watch<WalletProvider>();
 
+    final double totalBalance = walletApi.balance;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Forget Password",
+          "Add Funds",
           style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
         ),
       ),
@@ -38,35 +50,37 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           children: [
             SizedBox(height: 20),
             Text(
-              'Enter your email address to reset your password',
+              'Enter your amount ',
               style: GoogleFonts.inter(
                 fontSize: 16.0,
                 color: const Color(0xFF15224F),
               ),
             ),
             SizedBox(height: 20),
-            emailTextField(size),
+            amountTextField(size),
             SizedBox(height: 20),
             GestureDetector(
-                onTap: () {
-                  String email = emailController.text;
+                onTap: () async {
+                  String amount = amountController.text;
 
-                  // Check if the email is empty
-                  if (email.isEmpty) {
-                    // Show Flutter toast indicating email is required
+                  // Check if the amount is empty
+                  if (amount.isEmpty) {
+                    // Show Flutter toast indicating amount is required
                     Fluttertoast.showToast(
-                      msg: "Email is required",
+                      msg: "Amount is required",
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.CENTER,
                       backgroundColor: Colors.red,
                       textColor: Colors.white,
                     );
-                    return; // Exit the function early if email is empty
+                    return; // Exit the function early if amount is empty
                   }
 
-                  // Proceed with password reset process
-                  context.read<AuthAPI>().forgetPass(email);
-                  Navigator.pushNamed(context, VerificationScreen.routeName);
+                  final walletApi = context.read<WalletProvider>();
+
+                  // Show loading dialog if payment is loading
+
+                  await walletApi.initPayment(double.parse(amount));
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -83,7 +97,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                     ],
                   ),
                   child: Text(
-                    'Reset Password',
+                    'Add Funds',
                     style: GoogleFonts.inter(
                       fontSize: 16.0,
                       color: Colors.white,
@@ -99,7 +113,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
     );
   }
 
-  Widget emailTextField(Size size) {
+  Widget amountTextField(Size size) {
     return Container(
       alignment: Alignment.center,
       height: size.height / 15,
@@ -112,7 +126,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         ),
       ),
       child: TextField(
-        controller: emailController,
+        keyboardType: TextInputType.number,
+        controller: amountController,
         style: GoogleFonts.inter(
           fontSize: 16.0,
           color: const Color(0xFF15224F),
@@ -120,7 +135,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         maxLines: 1,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
-            labelText: 'Enter Email',
+            labelText: 'Enter amount',
             labelStyle: GoogleFonts.inter(
               fontSize: 12.0,
               color: const Color(0xFF969AA8),

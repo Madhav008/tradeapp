@@ -142,13 +142,15 @@ class AuthAPI extends ChangeNotifier {
         },
       );
       _forgetEmail = email;
-      notifyListeners();
       final message = jsonDecode(jsonEncode(response.data))['message'];
       Fluttertoast.showToast(msg: message);
+      notifyListeners();
     } catch (e) {
       print(e);
+      notifyListeners();
       Fluttertoast.showToast(
-          msg: "Retry Limit exceeded. Please try again after some time.");
+        msg: "Retry Limit exceeded. Please try again after some time.",
+      );
     }
   }
 

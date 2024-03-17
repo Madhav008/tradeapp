@@ -1,4 +1,4 @@
-package com.example.fanxange
+package live.fanxange.app
 
 import io.flutter.embedding.android.FlutterActivity
 

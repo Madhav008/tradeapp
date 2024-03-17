@@ -45,7 +45,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
             color: _isExpanded ? Colors.grey[200] : Colors.transparent,
             child: ListTile(
               title: Text(
-                actionText,
+                widget.title,
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   textStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -129,6 +129,20 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
                       Text(
                         '₹${widget.trailingText}',
                         style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Type: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${actionText}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal, color: Colors.black),
                       ),
                     ],
                   ),

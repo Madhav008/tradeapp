@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:fanxange/Model/MatchPeformanceModel.dart';
-import 'package:fanxange/Model/PlayerModel.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

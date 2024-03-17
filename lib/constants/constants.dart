@@ -25,6 +25,8 @@ const String WITHDRAW_ENDPOINT = '$API_URL/wallet/withdraw';
 
 const String TRANSACTION_ENDPOINT = '$API_URL/wallet/getusertransactions';
 
+const String PAYMENT_ENDPOINT = '$API_URL/payment/create';
+
 const String CREATE_ORDER_ENDPOINT = '$API_URL/order/create';
 const String GETUSERR_ORDER_ENDPOINT = '$API_URL/order';
 

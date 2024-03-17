@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:fanxange/Model/PaymentModel.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfwebcheckoutpayment.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayservice.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
+import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import FlutterToast
 
@@ -10,15 +15,23 @@ class WalletProvider with ChangeNotifier {
   double _balance = 0.00;
   late String? _walletId;
   late String? _userid;
+  final Dio _dio = Dio();
+
   bool _isLoading = false;
+  bool get walletLoading => _isLoading;
+
   List<Transactions> _transactions = [];
   List<Transactions> get transactions => _transactions;
+
   bool _isTransactionLoading = true;
   bool get isTransactionLoading => _isTransactionLoading;
-  bool get walletLoading => _isLoading;
+
   double get balance => _balance;
 
   AuthAPI auth = AuthAPI();
+
+  bool _isPaymentLoading = false;
+  bool get isPaymentLoading => _isPaymentLoading;
 
   WalletProvider() {
     final userid = auth.userid;
@@ -40,11 +53,11 @@ class WalletProvider with ChangeNotifier {
         // Handle the case where userid is null
         return;
       }
-      final wallet = await Dio().get(
-        GET_WALLET_ENDPOINT + '/${userid}', // Replace with your API endpoint
+      final wallet = await _dio.get(
+        '$GET_WALLET_ENDPOINT/$userid', // Replace with your API endpoint
         options: Options(headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${_token}',
+          'Authorization': 'Bearer $_token',
         }),
       );
       // print(wallet.data);
@@ -67,10 +80,10 @@ class WalletProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      await Dio().post(DEPOSIT_ENDPOINT, // Replace with your API endpoint
+      await _dio.post(DEPOSIT_ENDPOINT, // Replace with your API endpoint
           options: Options(headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${_token}',
+            'Authorization': 'Bearer $_token',
           }),
           data: {"userid": _userid, "amount": amount});
       await getWallet(_userid);
@@ -95,10 +108,10 @@ class WalletProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      await Dio().post(WITHDRAW_ENDPOINT, // Replace with your API endpoint
+      await _dio.post(WITHDRAW_ENDPOINT, // Replace with your API endpoint
           options: Options(headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${_token}',
+            'Authorization': 'Bearer $_token',
           }),
           data: {"userid": _userid, "amount": amount});
       await getWallet(_userid);
@@ -124,9 +137,8 @@ class WalletProvider with ChangeNotifier {
       _isTransactionLoading = true;
       notifyListeners();
 
-      final res = await Dio().get(
-        TRANSACTION_ENDPOINT +
-            '/${_walletId}', // Replace with your API endpoint
+      final res = await _dio.get(
+        '$TRANSACTION_ENDPOINT/$_walletId', // Replace with your API endpoint
         options: Options(headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${_token}',
@@ -153,6 +165,52 @@ class WalletProvider with ChangeNotifier {
       );
     }
   }
+
+  initPayment(amount) async {
+    try {
+      final _token = await getStringFromSharedPreferences();
+
+      _isPaymentLoading = true;
+      notifyListeners();
+      final userid = AuthAPI().userid;
+      print({'amount': amount, 'userid': userid});
+      final res = await _dio.post(
+        PAYMENT_ENDPOINT,
+        data: {'amount': amount, 'userid': userid},
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_token}',
+        }),
+      );
+      final payment = paymentFromJson(jsonEncode(res.data));
+      // final orderod = jsonDecode(jsonEncode(res.data));
+
+      var session = CFSessionBuilder()
+          .setEnvironment(CFEnvironment.SANDBOX)
+          .setOrderId(payment.orderId)
+          .setPaymentSessionId(payment.paymentSessionId)
+          .build();
+
+      var cfWebCheckout =
+          CFWebCheckoutPaymentBuilder().setSession(session).build();
+
+      var cfPaymentGateway = CFPaymentGatewayService();
+      cfPaymentGateway.setCallback((p0) {
+        print(p0);
+      }, (p0, p1) {
+        print(p1);
+        print(p0.getMessage());
+      });
+      cfPaymentGateway.doPayment(cfWebCheckout);
+      _isPaymentLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isPaymentLoading = false;
+      notifyListeners();
+      print(e);
+      Fluttertoast.showToast(msg: "Not Able to Start Transaction");
+    }
+  }
 }
 
 class Transactions {
@@ -160,12 +218,14 @@ class Transactions {
   final double amount;
   final String type;
   final String date;
+  final String description;
 
   Transactions({
     required this.transactionId,
     required this.amount,
     required this.type,
     required this.date,
+    required this.description,
   });
 
   factory Transactions.fromJson(Map<String, dynamic> json) {
@@ -174,6 +234,7 @@ class Transactions {
       amount: (json['amount'] as num).toDouble(),
       type: json['type'] as String,
       date: json['createdAt'],
+      description: json['description'],
     );
   }
 }

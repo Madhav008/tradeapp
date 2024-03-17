@@ -2,9 +2,11 @@ import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fanxange/pages/ChangePassPage.dart';
 import 'package:fanxange/pages/ForgetPage.dart';
+import 'package:fanxange/pages/PaymentPage.dart';
 import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
 import 'package:fanxange/pages/ScorecardPage.dart';
+import 'package:fanxange/pages/SplashScreen.dart';
 import 'package:fanxange/pages/Verification.dart';
 import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ import 'package:fanxange/pages/SignIn.dart';
 import 'package:fanxange/pages/SignUp.dart';
 import 'package:fanxange/pages/onboarding.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'appwrite/auth_api.dart';
 
 void main() {
@@ -44,6 +47,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final value = context.watch<AuthAPI>();
     final status = value.status;
+    Future<String?> _getPref() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString('firstTime');
+    }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -63,13 +70,29 @@ class MyApp extends StatelessWidget {
         PlayersOrdersPage.routeName: (context) => const PlayersOrdersPage(),
         WalletPage.routeName: (context) => WalletPage(),
         Scorecard.routeName: (context) => const Scorecard(),
-        MyHomePage.routeName: (context) => MyHomePage()
+        MyHomePage.routeName: (context) => MyHomePage(),
+        PaymentPage.routeName: (context) => PaymentPage()
       },
-      home: status == AuthStatus.uninitialized
-          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-          : status == AuthStatus.authenticated
-              ? MyHomePage()
-              : const SignIn(),
+      home: FutureBuilder<String?>(
+        future: _getPref(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SplashScreen();
+          } else if (snapshot.hasError) {
+            // Handle error
+            return Container(); // Placeholder widget for error handling
+          } else {
+            final isFirstTime = snapshot.data;
+            final isAuthenticated = status == AuthStatus.authenticated;
+
+            if (isFirstTime == null || isFirstTime == 'false') {
+              return Onboarding();
+            } else {
+              return isAuthenticated ? MyHomePage() : SignIn();
+            }
+          }
+        },
+      ),
     );
   }
 }

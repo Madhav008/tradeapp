@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:fanxange/components/CustomExpansionTile.dart';
+import 'package:fanxange/pages/PaymentPage.dart';
 import 'package:flutter/material.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
@@ -75,7 +78,7 @@ class _WalletPageState extends State<WalletPage> {
                     return Column(
                       children: [
                         CustomExpansionTile(
-                          title: 'Deposit',
+                          title: walletdata.description,
                           subtitle: formattedDate,
                           trailingText: walletdata.amount.toString(),
                           trailingIcon: Icons.arrow_drop_down,
@@ -137,7 +140,9 @@ class _WalletPageState extends State<WalletPage> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          _showMoneyDialog(context, MoneyAction.add);
+          // _showMoneyDialog(context, MoneyAction.add);
+          // context.read<WalletProvider>().initPayment(150.00);
+          Navigator.pushNamed(context, PaymentPage.routeName);
         },
         child: Container(
           padding: EdgeInsets.all(20),
@@ -145,6 +150,7 @@ class _WalletPageState extends State<WalletPage> {
               borderRadius: BorderRadius.circular(10), color: Colors.green),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            // ignore: prefer_const_literals_to_create_immutables
             children: [
               Icon(
                 FontAwesomeIcons.plus,

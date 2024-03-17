@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fanxange/pages/SignIn.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Onboarding extends StatefulWidget {
   static String routeName = "/onboarding";
@@ -15,24 +17,25 @@ class _OnboardingState extends State<Onboarding> {
   int index = 0;
   List data = [
     {
-      "image": "assets/images/onboarding_1.png",
-      "title": "Proven specialist",
-      "subtitle": "We check each specialist before he starts to work"
+      "image": "assets/svg/Cricket-bro.svg",
+      "title": "Your Expertise Matters",
+      "subtitle": "Leverage your knowledge and experience to excel in Cricket."
     },
     {
-      "image": "assets/images/onboarding_2.png",
-      "title": "Honest ratings",
-      "subtitle": "We carefully check each specialist and put honest ratings"
+      "image": "assets/svg/Highfive-amico.svg",
+      "title": "Stay Informed",
+      "subtitle": "Access real-time market data to stay ahead of the game."
     },
     {
-      "image": "assets/images/onboarding_3.png",
-      "title": "Insured orders",
-      "subtitle": "We sure each order for the amount of \$500"
+      "image": "assets/svg/Money income-bro.svg",
+      "title": "Secure Transactions",
+      "subtitle":
+          "Trade with confidence - your transactions are securely encrypted."
     },
     {
-      "image": "assets/images/onboarding_4.png",
-      "title": "Create order",
-      "subtitle": "It's easy, just click on the plus"
+      "image": "assets/svg/Fans-cuate.svg",
+      "title": "Start Trading",
+      "subtitle": "Begin your trading journey with just a few clicks."
     }
   ];
 
@@ -46,8 +49,19 @@ class _OnboardingState extends State<Onboarding> {
     });
   }
 
+  _firstTime() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("firstTime", "true");
+  }
+
   void goSignIn(context) {
     Navigator.pushNamed(context, SignIn.routeName);
+  }
+
+  @override
+  void initState() {
+    _firstTime();
+    super.initState();
   }
 
   @override
@@ -56,7 +70,6 @@ class _OnboardingState extends State<Onboarding> {
     double paddingTop = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
       body: SafeArea(
         child: SizedBox(
           width: screen.width,
@@ -78,21 +91,19 @@ class _OnboardingState extends State<Onboarding> {
                   style: const TextStyle(
                       fontFamily: 'Ubuntu',
                       fontWeight: FontWeight.w500,
-                      fontSize: 40,
+                      fontSize: 20,
                       height: 46.0 / 40.0,
                       color: Color(0xFF525464)),
                 ),
               ),
-              SizedBox(
-                height: screen.height * 0.0837,
-              ),
+              Spacer(),
               Padding(
                 padding:
                     EdgeInsets.symmetric(horizontal: screen.width * 0.1813),
-                child: Image(
-                  image: AssetImage(data[index]['image']),
-                  width: screen.width * 0.6346,
+                child: SvgPicture.asset(
+                  data[index]['image'],
                   height: screen.height * 0.3510,
+                  width: screen.width * 0.6346,
                 ),
               ),
               SizedBox(
@@ -216,14 +227,22 @@ class _OnboardingState extends State<Onboarding> {
                             borderRadius: BorderRadius.circular(90),
                             color: const Color(0xFF20C3AF),
                           ),
-                          child: const Icon(
-                            Icons.add,
-                            size: 40.0,
-                            color: Colors.white,
+                          child: const Center(
+                            child: Text(
+                              'Get Stated',
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                height: 19.0 / 16.0,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
+              Spacer()
             ],
           ),
         ),
