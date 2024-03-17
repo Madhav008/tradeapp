@@ -175,7 +175,7 @@ class _WalletPageState extends State<WalletPage> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          _showMoneyDialog(context, MoneyAction.withdraw);
+          // _showMoneyDialog(context, MoneyAction.withdraw);
         },
         child: Container(
           padding: EdgeInsets.all(20),
@@ -203,73 +203,7 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
-  void _showMoneyDialog(BuildContext context, MoneyAction action) {
-    TextEditingController amountController = new TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, setState) {
-            final walletApi = context.watch<WalletProvider>();
-            final isLoading = walletApi.walletLoading;
-            if (isLoading) {
-              return const Dialog(
-                backgroundColor: Colors.transparent,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircularProgressIndicator(),
-                    ]),
-              );
-            }
-            return AlertDialog(
-              title: Text(
-                  action == MoneyAction.add ? 'Add Money' : 'Withdraw Money'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    keyboardType: TextInputType.number,
-                    controller: amountController,
-                    decoration: InputDecoration(labelText: 'Amount'),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.of(context)
-                          .pop(); // Close the dialog before showing loading
-
-                      // _loading(context); // Show loading indicator
-
-                      try {
-                        if (action == MoneyAction.add) {
-                          await context
-                              .read<WalletProvider>()
-                              .addMoney(double.parse(amountController.text));
-                        } else {
-                          await context.read<WalletProvider>().withdrawMoney(
-                              double.parse(amountController.text));
-                        }
-                        // Handle add/withdraw money logic here
-                      } catch (e) {
-                        print('Error: $e');
-                      } finally {
-                        Navigator.of(context)
-                            .pop(); // Close the loading indicator
-                      }
-                    },
-                    child: Text(action == MoneyAction.add ? 'Add' : 'Withdraw'),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
+ 
   AppBar _appBar(BuildContext context) {
     return AppBar(
       actions: [

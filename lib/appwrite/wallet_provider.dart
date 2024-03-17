@@ -33,6 +33,9 @@ class WalletProvider with ChangeNotifier {
   bool _isPaymentLoading = false;
   bool get isPaymentLoading => _isPaymentLoading;
 
+  bool _isPaymentSuccess = false;
+  bool get isPaymentSuccess => _isPaymentSuccess;
+
   WalletProvider() {
     final userid = auth.userid;
     getWallet(userid);
@@ -166,14 +169,13 @@ class WalletProvider with ChangeNotifier {
     }
   }
 
-  initPayment(amount) async {
+  initPayment(amount, context) async {
     try {
       final _token = await getStringFromSharedPreferences();
 
       _isPaymentLoading = true;
       notifyListeners();
       final userid = AuthAPI().userid;
-      print({'amount': amount, 'userid': userid});
       final res = await _dio.post(
         PAYMENT_ENDPOINT,
         data: {'amount': amount, 'userid': userid},
@@ -196,14 +198,22 @@ class WalletProvider with ChangeNotifier {
 
       var cfPaymentGateway = CFPaymentGatewayService();
       cfPaymentGateway.setCallback((p0) {
-        print(p0);
+        // print(p0);
+        addMoney(amount);
+        _isPaymentLoading = false;
+        Navigator.pop(context);
+        notifyListeners();
+        Fluttertoast.showToast(msg: "Payment Success");
       }, (p0, p1) {
+        _isPaymentLoading = false;
+        notifyListeners();
+        Navigator.pop(context);
+
+        Fluttertoast.showToast(msg: "Payment Failed Please Retry");
         print(p1);
         print(p0.getMessage());
       });
       cfPaymentGateway.doPayment(cfWebCheckout);
-      _isPaymentLoading = false;
-      notifyListeners();
     } catch (e) {
       _isPaymentLoading = false;
       notifyListeners();

@@ -57,11 +57,19 @@ class SplashScreen extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            'Trade, Play, Win: Elevate Your Fantasy Cricket Experience',
-            style: GoogleFonts.inter(
-                fontWeight: FontWeight.w400, color: Colors.black45),
-          )
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Trade, Play, Win: Elevate Your Fantasy Cricket Experience',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black45,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
           //Trade, Play, Win: Elevate Your Fantasy Cricket Experience
           // Adding CircularProgressIndicator with custom color
         ],
