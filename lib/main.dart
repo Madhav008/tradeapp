@@ -45,8 +45,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final value = context.watch<AuthAPI>();
-    final status = value.status;
     Future<String?> _getPref() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       return prefs.getString('firstTime');
@@ -76,19 +74,15 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<String?>(
         future: _getPref(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return SplashScreen();
-          } else if (snapshot.hasError) {
-            // Handle error
-            return Container(); // Placeholder widget for error handling
+          final authStatus = context.watch<AuthAPI>().status;
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              authStatus == AuthStatus.uninitialized) {
+            return const SplashScreen(); // Show SplashScreen while waiting for SharedPreferences
           } else {
-            final isFirstTime = snapshot.data;
-            final isAuthenticated = status == AuthStatus.authenticated;
-
-            if (isFirstTime == null || isFirstTime == 'false') {
-              return Onboarding();
+            if (authStatus == AuthStatus.authenticated) {
+              return MyHomePage(); // Show HomePage if authenticated
             } else {
-              return isAuthenticated ? MyHomePage() : SignIn();
+              return const SignIn(); // Show SignIn page if unauthenticated
             }
           }
         },
