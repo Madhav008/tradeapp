@@ -56,7 +56,7 @@ class MatchListTile extends StatelessWidget {
                     Text(
                       (matchdata!.seriesname),
                       style: GoogleFonts.inter(
-                        fontSize: 15,
+                        fontSize: 12,
                         color: Colors.grey[700],
                       ),
                     ),
