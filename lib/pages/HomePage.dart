@@ -2,6 +2,7 @@
 
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/pages/PortfolioPage.dart';
+import 'package:fanxange/pages/ProfilePage.dart';
 import 'package:fanxange/pages/WalletPage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
     MatchListPage(),
     PortfolioPage(),
     WalletPage(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -54,6 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.wallet),
             label: 'Wallet',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.person),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,

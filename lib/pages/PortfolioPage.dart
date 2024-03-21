@@ -98,13 +98,6 @@ class PortfolioPage extends StatelessWidget {
           onPressed: () =>
               Navigator.pushNamed(context, NotificationPage.routeName),
         ),
-        IconButton(
-          icon: Icon(
-            FontAwesomeIcons.signOut,
-            color: Colors.grey[600],
-          ),
-          onPressed: () => context.read<AuthAPI>().logout(),
-        ),
       ],
       title: Padding(
         padding: const EdgeInsets.only(left: 80.0),

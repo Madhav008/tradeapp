@@ -1,5 +1,4 @@
 // ignore: file_names
-import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -122,12 +121,6 @@ class MatchListPage extends StatelessWidget {
           onPressed: () =>
               Navigator.pushNamed(context, NotificationPage.routeName),
         ),
-        IconButton(
-            icon: Icon(
-              FontAwesomeIcons.signOut,
-              color: Colors.grey[600],
-            ),
-            onPressed: () => context.read<AuthAPI>().logout())
       ],
       title: Padding(
         padding: const EdgeInsets.only(left: 80.0),

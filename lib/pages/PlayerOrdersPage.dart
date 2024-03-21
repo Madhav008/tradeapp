@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, prefer_const_constructors, use_key_in_widget_constructors
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/appwrite/database_api.dart';
 import 'package:fanxange/appwrite/performance_provider.dart';
@@ -46,11 +46,11 @@ class PlayersOrdersPage extends StatelessWidget {
 
     final totalInvested = matchOrders
         ?.map((element) => element.total_amount)
-        .reduce((value, element) => (value ?? 0) + (element ?? 0));
+        .reduce((value, element) => (value) + (element));
 
     final totalWinning = matchOrders
         ?.map((e) => e.profit)
-        .reduce((val, e) => (val ?? 0) + (e ?? 0));
+        .reduce((val, e) => (val) + (e));
 
     final netProfit = totalWinning! - totalInvested!;
     return Skeletonizer(
@@ -70,7 +70,7 @@ class PlayersOrdersPage extends StatelessWidget {
                       onTap: () {
                         Navigator.pushNamed(context, Scorecard.routeName);
                       },
-                      child: Container(
+                      child: SizedBox(
                         height: 20,
                         width: double.infinity,
                         child: const Row(
@@ -231,7 +231,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Image.network(
-                      ipodata.team1Logo ?? '',
+                      ipodata.team1Logo,
                       height: 60,
                       width: 60,
                     ),
@@ -279,8 +279,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                             child: ipodata.status == "notstarted"
                                 ? CountdownTimer(
                                     endTime: DateTime.parse(ipodata.startDate
-                                                .toIso8601String() ??
-                                            '')
+                                                .toIso8601String())
                                         .millisecondsSinceEpoch,
                                     textStyle: const TextStyle(
                                         fontSize: 14,
@@ -301,7 +300,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Image.network(
-                      ipodata.team2Logo ?? '',
+                      ipodata.team2Logo,
                       height: 60,
                       width: 60,
                     ),

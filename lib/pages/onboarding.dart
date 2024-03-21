@@ -55,7 +55,7 @@ class _OnboardingState extends State<Onboarding> {
   }
 
   void goSignIn(context) {
-    Navigator.pushNamed(context, SignIn.routeName);
+    Navigator.pushReplacementNamed(context, SignIn.routeName);
   }
 
   @override
@@ -219,28 +219,32 @@ class _OnboardingState extends State<Onboarding> {
                           EdgeInsets.symmetric(horizontal: screen.width * 0.08),
                       child: GestureDetector(
                         onTap: () => goSignIn(context),
-                        child: Container(
-                          height: 82.0,
-                          width: 82.0,
-                          // radius: 90.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(90),
-                            color: const Color(0xFF20C3AF),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Get Stated',
-                              style: TextStyle(
-                                fontFamily: 'Gilroy',
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                height: 19.0 / 16.0,
-                                color: Colors.white,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Container(
+                            height: 60.0,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF20C3AF),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: const Center(
+                              child: Text(
+                                'Get Started',
+                                style: TextStyle(
+                                  fontFamily: 'Gilroy',
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  height: 19.0 / 16.0,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
+                      // child: CustomButton(
+                      //   onTap: nextPage,
+                      // ),
                     ),
               Spacer()
             ],

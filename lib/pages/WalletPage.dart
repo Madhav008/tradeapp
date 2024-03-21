@@ -44,7 +44,7 @@ class _WalletPageState extends State<WalletPage> {
             Row(
               children: [
                 _buildBalanceContainer('Total Balance', totalBalance,
-                    color: Color.fromARGB(207, 254, 152, 121)),
+                    color: Colors.transparent)
               ],
             ),
             Row(
@@ -106,28 +106,27 @@ class _WalletPageState extends State<WalletPage> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: color,
+          border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(10),
         ),
         padding: EdgeInsets.all(16),
         margin: EdgeInsets.only(top: 8, bottom: 8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
             ),
             SizedBox(height: 8),
             Text(
               '₹${balance.toStringAsFixed(2)}',
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -147,7 +146,16 @@ class _WalletPageState extends State<WalletPage> {
         child: Container(
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), color: Colors.green),
+            borderRadius: BorderRadius.circular(10.0),
+            color: const Color(0xFF21899C),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF4C2E84).withOpacity(0.2),
+                // offset: const Offset(0, 15.0),
+                blurRadius: 60.0,
+              ),
+            ],
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             // ignore: prefer_const_literals_to_create_immutables
@@ -180,7 +188,9 @@ class _WalletPageState extends State<WalletPage> {
         child: Container(
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), color: Colors.blue),
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 5, 57, 99).withOpacity(0.9),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -203,7 +213,6 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
- 
   AppBar _appBar(BuildContext context) {
     return AppBar(
       actions: [
@@ -214,13 +223,6 @@ class _WalletPageState extends State<WalletPage> {
           ),
           onPressed: () =>
               Navigator.pushNamed(context, NotificationPage.routeName),
-        ),
-        IconButton(
-          icon: Icon(
-            FontAwesomeIcons.signOut,
-            color: Colors.grey[600],
-          ),
-          onPressed: () => context.read<AuthAPI>().logout(),
         ),
       ],
       title: Padding(

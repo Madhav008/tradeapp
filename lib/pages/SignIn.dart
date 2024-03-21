@@ -118,6 +118,7 @@ class _SignInState extends State<SignIn> {
         password: passwordController.text,
       );
       Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, MyHomePage.routeName);
     } on Exception catch (e) {
       Navigator.pop(context);
       showAlert(title: 'Login failed', text: e.toString());
