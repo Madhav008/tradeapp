@@ -36,6 +36,12 @@ class WalletProvider with ChangeNotifier {
   bool _isPaymentSuccess = false;
   bool get isPaymentSuccess => _isPaymentSuccess;
 
+  String _upiId = '';
+  String get upiId => _upiId;
+
+  double _amount = 0.00;
+  double get amount => _amount;
+
   WalletProvider() {
     final userid = auth.userid;
     getWallet(userid);
@@ -76,8 +82,8 @@ class WalletProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addMoney(double amount) async {
-    final _token = await getStringFromSharedPreferences();
+  Future<void> addMoney(double amount, String upi) async {
+    /* final _token = await getStringFromSharedPreferences();
 
     try {
       _isLoading = true;
@@ -101,7 +107,11 @@ class WalletProvider with ChangeNotifier {
       print('Error adding money: $e');
       Fluttertoast.showToast(
           msg: 'Error adding money: $e', toastLength: Toast.LENGTH_SHORT);
-    }
+    } */
+
+    _amount = amount;
+    _upiId = upi;
+    notifyListeners();
   }
 
   Future<void> withdrawMoney(double amount) async {
@@ -169,58 +179,58 @@ class WalletProvider with ChangeNotifier {
     }
   }
 
-  initPayment(amount, context) async {
-    try {
-      final _token = await getStringFromSharedPreferences();
+  // initPayment(amount, context) async {
+  //   try {
+  //     final _token = await getStringFromSharedPreferences();
 
-      _isPaymentLoading = true;
-      notifyListeners();
-      final userid = AuthAPI().userid;
-      final res = await _dio.post(
-        PAYMENT_ENDPOINT,
-        data: {'amount': amount, 'userid': userid},
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${_token}',
-        }),
-      );
-      final payment = paymentFromJson(jsonEncode(res.data));
-      // final orderod = jsonDecode(jsonEncode(res.data));
+  //     _isPaymentLoading = true;
+  //     notifyListeners();
+  //     final userid = AuthAPI().userid;
+  //     final res = await _dio.post(
+  //       PAYMENT_ENDPOINT,
+  //       data: {'amount': amount, 'userid': userid},
+  //       options: Options(headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer ${_token}',
+  //       }),
+  //     );
+  //     final payment = paymentFromJson(jsonEncode(res.data));
+  //     // final orderod = jsonDecode(jsonEncode(res.data));
 
-      var session = CFSessionBuilder()
-          .setEnvironment(CFEnvironment.SANDBOX)
-          .setOrderId(payment.orderId)
-          .setPaymentSessionId(payment.paymentSessionId)
-          .build();
+  //     var session = CFSessionBuilder()
+  //         .setEnvironment(CFEnvironment.SANDBOX)
+  //         .setOrderId(payment.orderId)
+  //         .setPaymentSessionId(payment.paymentSessionId)
+  //         .build();
 
-      var cfWebCheckout =
-          CFWebCheckoutPaymentBuilder().setSession(session).build();
+  //     var cfWebCheckout =
+  //         CFWebCheckoutPaymentBuilder().setSession(session).build();
 
-      var cfPaymentGateway = CFPaymentGatewayService();
-      cfPaymentGateway.setCallback((p0) {
-        // print(p0);
-        addMoney(amount);
-        _isPaymentLoading = false;
-        Navigator.pop(context);
-        notifyListeners();
-        Fluttertoast.showToast(msg: "Payment Success");
-      }, (p0, p1) {
-        _isPaymentLoading = false;
-        notifyListeners();
-        Navigator.pop(context);
+  //     var cfPaymentGateway = CFPaymentGatewayService();
+  //     cfPaymentGateway.setCallback((p0) {
+  //       // print(p0);
+  //       addMoney(amount);
+  //       _isPaymentLoading = false;
+  //       Navigator.pop(context);
+  //       notifyListeners();
+  //       Fluttertoast.showToast(msg: "Payment Success");
+  //     }, (p0, p1) {
+  //       _isPaymentLoading = false;
+  //       notifyListeners();
+  //       Navigator.pop(context);
 
-        Fluttertoast.showToast(msg: "Payment Failed Please Retry");
-        print(p1);
-        print(p0.getMessage());
-      });
-      cfPaymentGateway.doPayment(cfWebCheckout);
-    } catch (e) {
-      _isPaymentLoading = false;
-      notifyListeners();
-      print(e);
-      Fluttertoast.showToast(msg: "Not Able to Start Transaction");
-    }
-  }
+  //       Fluttertoast.showToast(msg: "Payment Failed Please Retry");
+  //       print(p1);
+  //       print(p0.getMessage());
+  //     });
+  //     cfPaymentGateway.doPayment(cfWebCheckout);
+  //   } catch (e) {
+  //     _isPaymentLoading = false;
+  //     notifyListeners();
+  //     print(e);
+  //     Fluttertoast.showToast(msg: "Not Able to Start Transaction");
+  //   }
+  // }
 }
 
 class Transactions {

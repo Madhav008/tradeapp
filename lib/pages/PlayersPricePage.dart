@@ -50,7 +50,7 @@ class PlayerPrice extends StatelessWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 0.0,
-                    mainAxisExtent: 170),
+                    mainAxisExtent: 140),
                 // shrinkWrap: true,
                 itemCount: databaseAPI.playersdata?.length,
                 itemBuilder: (context, index) {
@@ -68,7 +68,7 @@ class PlayerPrice extends StatelessWidget {
             databaseAPI.matchdata.status != "completed")
         ? GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+                crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 140),
             // shrinkWrap: true,
             itemCount: databaseAPI.teamAPlayers.length,
             itemBuilder: (context, index) {
@@ -84,7 +84,7 @@ class PlayerPrice extends StatelessWidget {
             databaseAPI.matchdata.status != "completed")
         ? GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 170),
+                crossAxisCount: 2, mainAxisSpacing: 0.0, mainAxisExtent: 140),
             // shrinkWrap: true,
             itemCount: databaseAPI.teamBPlayers.length,
             itemBuilder: (context, index) {
@@ -103,20 +103,6 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
     final ipodata = databaseAPI.matchdata;
 
     return AppBar(
-      actions: [
-        IconButton(
-          icon: Icon(
-            Icons.notifications,
-            color: Colors.grey[600],
-          ),
-          onPressed: () =>
-              Navigator.pushNamed(context, NotificationPage.routeName),
-        ),
-      ],
-      title: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [],
-      ),
       bottom: TabBar(
         tabs: [
           const Tab(text: 'All'),

@@ -5,6 +5,7 @@ import 'package:fanxange/pages/ForgetPage.dart';
 import 'package:fanxange/pages/PaymentPage.dart';
 import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
+import 'package:fanxange/pages/QRPage.dart';
 import 'package:fanxange/pages/ScorecardPage.dart';
 import 'package:fanxange/pages/SplashScreen.dart';
 import 'package:fanxange/pages/Verification.dart';
@@ -69,7 +70,10 @@ class MyApp extends StatelessWidget {
         WalletPage.routeName: (context) => WalletPage(),
         Scorecard.routeName: (context) => const Scorecard(),
         MyHomePage.routeName: (context) => MyHomePage(),
-        PaymentPage.routeName: (context) => PaymentPage()
+        PaymentPage.routeName: (context) => PaymentPage(),
+        QRPage.routeName: (context) => QRPage()
+
+
       },
       home: FutureBuilder<String?>(
         future: _getPref(),

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:fanxange/components/qr_code.dart';
+import 'package:fanxange/pages/QRPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
@@ -16,6 +18,7 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPageState extends State<PaymentPage> {
   TextEditingController amountController = TextEditingController();
+  TextEditingController upiController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,53 +39,62 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 20),
-                  Text(
-                    'Enter your amount ',
-                    style: GoogleFonts.inter(
-                      fontSize: 16.0,
-                      color: const Color(0xFF15224F),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  amountTextField(size),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: walletApi.isPaymentLoading
-                        ? null
-                        : _handleAddFunds, // Disable button when disabled
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: size.height / 18,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50.0),
-                        color: walletApi.isPaymentLoading
-                            ? Colors.grey
-                            : const Color(0xFF21899C),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF4C2E84).withOpacity(0.2),
-                            offset: const Offset(0, 15.0),
-                            blurRadius: 60.0,
-                          ),
-                        ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Enter your amount ',
+                      style: GoogleFonts.inter(
+                        fontSize: 16.0,
+                        color: const Color(0xFF15224F),
                       ),
-                      child: Text(
-                        'Add Funds',
-                        style: GoogleFonts.inter(
-                          fontSize: 16.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          height: 1.5,
+                    ),
+                    amountTextField(size),
+                    SizedBox(height: 20),
+                    Text(
+                      'Enter your UPI Id  ',
+                      style: GoogleFonts.inter(
+                        fontSize: 16.0,
+                        color: const Color(0xFF15224F),
+                      ),
+                    ),
+                    upiTextField(size),
+                    SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: walletApi.isPaymentLoading
+                          ? null
+                          : _handleAddFunds, // Disable button when disabled
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: size.height / 18,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50.0),
+                          color: walletApi.isPaymentLoading
+                              ? Colors.grey
+                              : const Color(0xFF21899C),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF4C2E84).withOpacity(0.2),
+                              offset: const Offset(0, 15.0),
+                              blurRadius: 60.0,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.center,
+                        child: Text(
+                          'Add Funds',
+                          style: GoogleFonts.inter(
+                            fontSize: 16.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             if (walletApi
@@ -130,7 +142,9 @@ class _PaymentPageState extends State<PaymentPage> {
     }
 
     // Initiate payment
-    await walletApi.initPayment(parsedAmount, context);
+    // await walletApi.initPayment(parsedAmount, context);
+    await walletApi.addMoney(parsedAmount, upiController.text);
+    Navigator.pushNamed(context, QRPage.routeName);
   }
 
   Widget amountTextField(Size size) {
@@ -156,6 +170,38 @@ class _PaymentPageState extends State<PaymentPage> {
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
           labelText: 'Enter amount',
+          labelStyle: GoogleFonts.inter(
+            fontSize: 12.0,
+            color: const Color(0xFF969AA8),
+          ),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget upiTextField(Size size) {
+    return Container(
+      alignment: Alignment.center,
+      height: size.height / 15,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          width: 1.0,
+          color: const Color(0xFFEFEFEF),
+        ),
+      ),
+      child: TextField(
+        controller: upiController,
+        style: GoogleFonts.inter(
+          fontSize: 16.0,
+          color: const Color(0xFF15224F),
+        ),
+        maxLines: 1,
+        cursorColor: const Color(0xFF15224F),
+        decoration: InputDecoration(
+          labelText: 'Enter UPI ',
           labelStyle: GoogleFonts.inter(
             fontSize: 12.0,
             color: const Color(0xFF969AA8),

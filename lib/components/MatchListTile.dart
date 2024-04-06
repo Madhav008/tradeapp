@@ -53,11 +53,17 @@ class MatchListTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      (matchdata!.seriesname),
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: Colors.grey[700],
+                    Container(
+                      width: 200,
+                      alignment: Alignment.center,
+                      child: Text(
+                        (matchdata!.seriesname),
+                        textAlign: TextAlign.center, // Align text to the center
+
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: Colors.grey[700],
+                        ),
                       ),
                     ),
                     Row(

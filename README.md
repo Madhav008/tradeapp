@@ -1,5 +1,11 @@
 # Fanxange
+    [] Google Pay Intent
+        04-06 01:52:18.988  1652  4143 W XSpaceManagerServiceImpl: checkXSpaceControl, from:com.miui.gallery, to:com.google.android.apps.nbu.paisa.user, with act:android.intent.action.SEND, callingUserId:0, toUserId:0
+        04-06 01:52:18.990  1652  4143 I ActivityTaskManager: START u0 {act=android.intent.action.SEND typ=image/* flg=0x18080001 cmp=com.google.android.apps.nbu.paisa.user/com.google.nbu.paisa.flutter.gpay.app.ShareIntentFilter clip={image/* {U(content)}} (has extras)} from uid 10112 from pid 24235 callingPackage com.miui.gallery
 
+    [] Paytm Intent
+        http://m.paytm.me/scpn
+        
 # Feature 
     [*] Order Flow
         [*] Order creation
