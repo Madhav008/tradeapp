@@ -53,10 +53,6 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          // primarySwatch: Colors.blue,
-          // visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
       routes: {
         Onboarding.routeName: (context) => const Onboarding(),
         SignIn.routeName: (context) => const SignIn(),
@@ -73,24 +69,28 @@ class MyApp extends StatelessWidget {
         PaymentPage.routeName: (context) => PaymentPage(),
         QRViewer.routeName: (context) => QRViewer()
       },
-      home: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-        child: FutureBuilder<String?>(
-          future: _getPref(),
-          builder: (context, snapshot) {
-            final authStatus = context.watch<AuthAPI>().status;
-            if (snapshot.connectionState == ConnectionState.waiting ||
-                authStatus == AuthStatus.uninitialized) {
-              return const SplashScreen(); // Show SplashScreen while waiting for SharedPreferences
+      builder: (context, child) {
+        // Applying MediaQuery modification here affects all routes
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
+          child: child!,
+        );
+      },
+      home: FutureBuilder<String?>(
+        future: _getPref(),
+        builder: (context, snapshot) {
+          final authStatus = context.watch<AuthAPI>().status;
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              authStatus == AuthStatus.uninitialized) {
+            return const SplashScreen(); // Show SplashScreen while waiting for SharedPreferences
+          } else {
+            if (authStatus == AuthStatus.authenticated) {
+              return MyHomePage(); // Show HomePage if authenticated
             } else {
-              if (authStatus == AuthStatus.authenticated) {
-                return MyHomePage(); // Show HomePage if authenticated
-              } else {
-                return const SignIn(); // Show SignIn page if unauthenticated
-              }
+              return const SignIn(); // Show SignIn page if unauthenticated
             }
-          },
-        ),
+          }
+        },
       ),
     );
   }
