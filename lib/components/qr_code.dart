@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -14,7 +16,9 @@ import 'package:saver_gallery/saver_gallery.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class QRViewer extends StatefulWidget {
-  const QRViewer({Key? key}) : super(key: key);
+  static String routeName = "/qrcode";
+
+  // const QRViewer({Key? key}) : super(key: key);
 
   @override
   _QRViewerState createState() => _QRViewerState();
@@ -22,17 +26,10 @@ class QRViewer extends StatefulWidget {
 
 class _QRViewerState extends State<QRViewer> {
   final GlobalKey _globalKey = GlobalKey();
-  GlobalKey _saveQrKey = GlobalKey();
-  GlobalKey _oneUpiKey = GlobalKey();
+  final GlobalKey _saveQrKey = GlobalKey();
+  final GlobalKey _oneUpiKey = GlobalKey();
   bool isQrSaved = false; // Tracks whether the QR code has been saved
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([_saveQrKey, _oneUpiKey]);
-    });
-  }
-
+  BuildContext? myContext;
   static const platform = MethodChannel('live.fanxange.app/channel');
 
   Future<void> launchAppByPackageName(String packageName) async {
@@ -117,80 +114,132 @@ class _QRViewerState extends State<QRViewer> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        ShowCaseWidget.of(myContext!).startShowCase([_saveQrKey, _oneUpiKey]));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final walletApi = context.watch<WalletProvider>();
     final upiId = walletApi.upiId;
     final amount = walletApi.amount;
 
     return ShowCaseWidget(
-      builder: Builder(builder: (context) {
-        return Column(
-          children: [
-            RepaintBoundary(
-              key: _globalKey,
-              child: PrettyQrView.data(
-                data:
-                    'upi://pay?pa=paytmqr2810050501011dupyvwy1xxc@paytm&am=${amount}&pn=Fanxange&mc=5499&mode=02&orgid=000000&paytmqr=2810050501011DUPYVWY1XXC&tn=From_${upiId}&sign=MEUCIEvY00mXGj1Nj2D5leMdDqTsAQ09pyibK9BEnwPIpi4EAiEAxJ6oYZeGdqGMryeYnhil9Xw1PhIzCaOcTmRfghcfmNs=',
-                decoration: const PrettyQrDecoration(
-                  image: PrettyQrDecorationImage(
-                    image: AssetImage('assets/images/cricket-ball.png'),
-                  ),
-                ),
-              ),
+      autoPlay: true,
+      autoPlayDelay: Duration(milliseconds: 2500),
+      builder: Builder(builder: (myctx) {
+        myContext = myctx;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "QR CODE",
+              style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 20),
-            Showcase(
-              key: _saveQrKey,
-              description: 'Tap to save the QR code to your gallery',
-              child: GestureDetector(
-                onTap: _saveScreen,
-                child: Container(
-                  alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 18,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF21899C),
-                    borderRadius: BorderRadius.circular(50.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF4C2E84).withOpacity(0.2),
-                        offset: const Offset(0, 15.0),
-                        blurRadius: 60.0,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    'SAVE QR TO GALLERY',
-                    style: GoogleFonts.inter(
-                      fontSize: 13.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
-            Showcase(
-              key: _oneUpiKey,
-              description: 'Tap On UPI APP From Which you want to Pay',
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  paymentButton(
-                      'assets/images/gpay.png',
-                      'com.google.android.apps.nbu.paisa.user',
-                      isQrSaved), // Package name for Google Pay
-                  paymentButton('assets/images/paytm.png', 'net.one97.paytm',
-                      isQrSaved), // Package name for Paytm
-                  paymentButton('assets/images/phonepe.png', 'com.phonepe.app',
-                      isQrSaved), // Package name for PhonePe
-                  paymentButton('assets/images/upi.png', 'in.org.npci.upiapp',
-                      isQrSaved), // Package name for BHIM UPI
+                  RepaintBoundary(
+                    key: _globalKey,
+                    child: PrettyQrView.data(
+                      data:
+                          'upi://pay?pa=paytmqr2810050501011dupyvwy1xxc@paytm&am=${amount}&pn=Fanxange&mc=5499&mode=02&orgid=000000&paytmqr=2810050501011DUPYVWY1XXC&tn=From_${upiId}&sign=MEUCIEvY00mXGj1Nj2D5leMdDqTsAQ09pyibK9BEnwPIpi4EAiEAxJ6oYZeGdqGMryeYnhil9Xw1PhIzCaOcTmRfghcfmNs=',
+                      decoration: const PrettyQrDecoration(
+                        image: PrettyQrDecorationImage(
+                          image: AssetImage('assets/images/cricket-ball.png'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Showcase(
+                    targetBorderRadius: BorderRadius.circular(50),
+                    key: _saveQrKey,
+                    description: 'Tap to save the QR code to your gallery',
+                    child: GestureDetector(
+                      onTap: _saveScreen,
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height / 18,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF21899C),
+                          borderRadius: BorderRadius.circular(50.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF4C2E84).withOpacity(0.2),
+                              offset: const Offset(0, 15.0),
+                              blurRadius: 60.0,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'SAVE QR TO GALLERY',
+                          style: GoogleFonts.inter(
+                            fontSize: 13.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.1626),
+                    child: Text(
+                      "USE ANY UPI AND SCAN THE QR",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        height: 22.0 / 16.0,
+                        letterSpacing: 0.33,
+                        color: Color(0xFF838391),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Showcase(
+                    key: _oneUpiKey,
+                    description: 'Tap On UPI APP From Which you want to Pay',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        paymentButton(
+                            'assets/images/gpay.png',
+                            'com.google.android.apps.nbu.paisa.user',
+                            isQrSaved), // Package name for Google Pay
+                        paymentButton(
+                            'assets/images/paytm.png',
+                            'net.one97.paytm',
+                            isQrSaved), // Package name for Paytm
+                        paymentButton(
+                            'assets/images/phonepe.png',
+                            'com.phonepe.app',
+                            isQrSaved), // Package name for PhonePe
+                        paymentButton(
+                            'assets/images/upi.png',
+                            'in.org.npci.upiapp',
+                            isQrSaved), // Package name for BHIM UPI
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
+          ),
         );
       }),
     );

@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:fanxange/components/qr_code.dart';
-import 'package:fanxange/pages/QRPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
@@ -144,7 +143,7 @@ class _PaymentPageState extends State<PaymentPage> {
     // Initiate payment
     // await walletApi.initPayment(parsedAmount, context);
     await walletApi.addMoney(parsedAmount, upiController.text);
-    Navigator.pushNamed(context, QRPage.routeName);
+    Navigator.pushNamed(context, QRViewer.routeName);
   }
 
   Widget amountTextField(Size size) {

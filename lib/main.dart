@@ -1,11 +1,11 @@
 import 'package:fanxange/appwrite/performance_provider.dart';
 import 'package:fanxange/appwrite/wallet_provider.dart';
+import 'package:fanxange/components/qr_code.dart';
 import 'package:fanxange/pages/ChangePassPage.dart';
 import 'package:fanxange/pages/ForgetPage.dart';
 import 'package:fanxange/pages/PaymentPage.dart';
 import 'package:fanxange/pages/PlayerOrdersPage.dart';
 import 'package:fanxange/pages/PlayersPricePage.dart';
-import 'package:fanxange/pages/QRPage.dart';
 import 'package:fanxange/pages/ScorecardPage.dart';
 import 'package:fanxange/pages/SplashScreen.dart';
 import 'package:fanxange/pages/Verification.dart';
@@ -71,25 +71,26 @@ class MyApp extends StatelessWidget {
         Scorecard.routeName: (context) => const Scorecard(),
         MyHomePage.routeName: (context) => MyHomePage(),
         PaymentPage.routeName: (context) => PaymentPage(),
-        QRPage.routeName: (context) => QRPage()
-
-
+        QRViewer.routeName: (context) => QRViewer()
       },
-      home: FutureBuilder<String?>(
-        future: _getPref(),
-        builder: (context, snapshot) {
-          final authStatus = context.watch<AuthAPI>().status;
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              authStatus == AuthStatus.uninitialized) {
-            return const SplashScreen(); // Show SplashScreen while waiting for SharedPreferences
-          } else {
-            if (authStatus == AuthStatus.authenticated) {
-              return MyHomePage(); // Show HomePage if authenticated
+      home: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: FutureBuilder<String?>(
+          future: _getPref(),
+          builder: (context, snapshot) {
+            final authStatus = context.watch<AuthAPI>().status;
+            if (snapshot.connectionState == ConnectionState.waiting ||
+                authStatus == AuthStatus.uninitialized) {
+              return const SplashScreen(); // Show SplashScreen while waiting for SharedPreferences
             } else {
-              return const SignIn(); // Show SignIn page if unauthenticated
+              if (authStatus == AuthStatus.authenticated) {
+                return MyHomePage(); // Show HomePage if authenticated
+              } else {
+                return const SignIn(); // Show SignIn page if unauthenticated
+              }
             }
-          }
-        },
+          },
+        ),
       ),
     );
   }
