@@ -7,6 +7,7 @@ import 'package:fanxange/appwrite/wallet_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:video_player/video_player.dart';
 
 class PaymentPage extends StatefulWidget {
   static String routeName = "/payment";
@@ -18,6 +19,26 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   TextEditingController amountController = TextEditingController();
   TextEditingController upiController = TextEditingController();
+  VideoPlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset(
+      'assets/images/PayTut.mp4', // Replace with your video asset or network path
+    )..initialize().then((_) {
+        setState(() {});
+        _controller?.setLooping(true); // Enable looping
+        _controller?.setPlaybackSpeed(1.3); // Set playback speed to 1.5x
+        _controller?.play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +113,41 @@ class _PaymentPageState extends State<PaymentPage> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal:
+                              MediaQuery.of(context).size.width * 0.1626),
+                      child: Text(
+                        "HOW TO ADD FUND",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: 'Gilroy',
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          height: 22.0 / 16.0,
+                          letterSpacing: 0.33,
+                          color: Color(0xFF838391),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    if (_controller?.value.isInitialized ??
+                        false) // Check if the controller is initialized
+                      FittedBox(
+                        fit: BoxFit
+                            .contain, // This will cover the entire space of the container, potentially cropping the video
+                        child: SizedBox(
+                          width: _controller!.value.size.width,
+                          height: _controller!.value.size.height,
+                          child: VideoPlayer(
+                              _controller!), // Your VideoPlayer widget without the 'fit' parameter
+                        ),
+                      ),
                   ],
                 ),
               ),
