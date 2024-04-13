@@ -20,7 +20,8 @@ import 'package:fanxange/pages/onboarding.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'appwrite/auth_api.dart';
-
+import 'dart:async'; // Required for StreamSubscription
+import 'package:uni_links/uni_links.dart';
 void main() {
   runApp(MultiProvider(
     providers: [
@@ -41,8 +42,39 @@ void main() {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  StreamSubscription? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    initUniLinks();
+  }
+
+  Future<void> initUniLinks() async {
+    // Deep links listener
+    _sub = uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        Navigator.pushNamed(context, uri.path, arguments: uri.queryParameters);
+      }
+    }, onError: (err) {
+      // Handle error
+      print('Failed to handle link: $err');
+    });
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +99,7 @@ class MyApp extends StatelessWidget {
         Scorecard.routeName: (context) => const Scorecard(),
         MyHomePage.routeName: (context) => MyHomePage(),
         PaymentPage.routeName: (context) => PaymentPage(),
-        QRViewer.routeName: (context) => QRViewer()
+        QRViewer.routeName: (context) => QRViewer(),
       },
       builder: (context, child) {
         // Applying MediaQuery modification here affects all routes

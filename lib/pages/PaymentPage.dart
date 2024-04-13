@@ -113,7 +113,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    /* SizedBox(
                       height: 20,
                     ),
                     Container(
@@ -147,7 +147,7 @@ class _PaymentPageState extends State<PaymentPage> {
                           child: VideoPlayer(
                               _controller!), // Your VideoPlayer widget without the 'fit' parameter
                         ),
-                      ),
+                      ), */
                   ],
                 ),
               ),
@@ -197,9 +197,8 @@ class _PaymentPageState extends State<PaymentPage> {
     }
 
     // Initiate payment
-    // await walletApi.initPayment(parsedAmount, context);
-    await walletApi.addMoney(parsedAmount, upiController.text);
-    Navigator.pushNamed(context, QRViewer.routeName);
+    await walletApi.initPayment(parsedAmount, context);
+    // await walletApi.addMoney(parsedAmount, upiController.text);
   }
 
   Widget amountTextField(Size size) {

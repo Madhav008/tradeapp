@@ -4,12 +4,9 @@ import 'package:fanxange/Model/PaymentModel.dart';
 import 'package:fanxange/appwrite/auth_api.dart';
 import 'package:fanxange/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfwebcheckoutpayment.dart';
-import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayservice.dart';
-import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
-import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import FlutterToast
+import 'package:url_launcher/url_launcher.dart';
 
 class WalletProvider with ChangeNotifier {
   double _balance = 0.00;
@@ -41,6 +38,9 @@ class WalletProvider with ChangeNotifier {
 
   double _amount = 0.00;
   double get amount => _amount;
+
+  String _orderId = '';
+  String get orderId => _orderId;
 
   WalletProvider() {
     final userid = auth.userid;
@@ -179,58 +179,36 @@ class WalletProvider with ChangeNotifier {
     }
   }
 
-  // initPayment(amount, context) async {
-  //   try {
-  //     final _token = await getStringFromSharedPreferences();
+  initPayment(amount, context) async {
+    final _token = await getStringFromSharedPreferences();
 
-  //     _isPaymentLoading = true;
-  //     notifyListeners();
-  //     final userid = AuthAPI().userid;
-  //     final res = await _dio.post(
-  //       PAYMENT_ENDPOINT,
-  //       data: {'amount': amount, 'userid': userid},
-  //       options: Options(headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ${_token}',
-  //       }),
-  //     );
-  //     final payment = paymentFromJson(jsonEncode(res.data));
-  //     // final orderod = jsonDecode(jsonEncode(res.data));
+    _isPaymentLoading = true;
+    notifyListeners();
+    final userid = AuthAPI().userid;
+    final res = await _dio.post(
+      PAYMENT_ENDPOINT,
+      data: {'amount': amount, 'userid': userid},
+      options: Options(headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${_token}',
+      }),
+    );
+    final payment = Payment.fromJson(res.data);
 
-  //     var session = CFSessionBuilder()
-  //         .setEnvironment(CFEnvironment.SANDBOX)
-  //         .setOrderId(payment.orderId)
-  //         .setPaymentSessionId(payment.paymentSessionId)
-  //         .build();
+    _orderId = payment.orderId;
+    _launchURL('https://fanxange.live/deposit/' + orderId);
+    _isPaymentLoading = false;
+    notifyListeners();
+  }
 
-  //     var cfWebCheckout =
-  //         CFWebCheckoutPaymentBuilder().setSession(session).build();
-
-  //     var cfPaymentGateway = CFPaymentGatewayService();
-  //     cfPaymentGateway.setCallback((p0) {
-  //       // print(p0);
-  //       addMoney(amount);
-  //       _isPaymentLoading = false;
-  //       Navigator.pop(context);
-  //       notifyListeners();
-  //       Fluttertoast.showToast(msg: "Payment Success");
-  //     }, (p0, p1) {
-  //       _isPaymentLoading = false;
-  //       notifyListeners();
-  //       Navigator.pop(context);
-
-  //       Fluttertoast.showToast(msg: "Payment Failed Please Retry");
-  //       print(p1);
-  //       print(p0.getMessage());
-  //     });
-  //     cfPaymentGateway.doPayment(cfWebCheckout);
-  //   } catch (e) {
-  //     _isPaymentLoading = false;
-  //     notifyListeners();
-  //     print(e);
-  //     Fluttertoast.showToast(msg: "Not Able to Start Transaction");
-  //   }
-  // }
+  void _launchURL(String urlString) async {
+    Uri url = Uri.parse(urlString);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $urlString';
+    }
+  }
 }
 
 class Transactions {
